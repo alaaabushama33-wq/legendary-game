@@ -13,7 +13,6 @@
             --secondary: #ec4899; 
             --bg-gradient: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%); 
         }
-        /* الثيم الملكي */
         .theme-royal { 
             --primary: #8b5cf6; 
             --secondary: #3b82f6; 
@@ -44,14 +43,23 @@
         .current { background: var(--secondary); box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); transform: scale(1.1); }
         .locked { background: #1e293b; color: #475569; cursor: not-allowed; }
         
-        .social-icon { transition: 0.3s; font-size: 1.8rem; opacity: 0.8; color: white; }
+        .social-icon { transition: 0.3s; font-size: 1.8rem; opacity: 0.8; color: white; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .social-icon span { font-size: 0.65rem; font-weight: bold; opacity: 0.7; }
         .social-icon:hover { opacity: 1; transform: translateY(-5px); color: var(--secondary); }
+        .social-icon:hover span { opacity: 1; color: white; }
         
-        .popup-hint { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
+        .popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
+        .popup-box { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 2rem; text-align: center; max-width: 320px; }
+        
+        .back-button { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); z-index: 10; }
+        .back-button:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
+        
+        .points-badge { background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); padding: 4px 12px; border-radius: 50px; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px; }
     </style>
 </head>
 <body id="mainBody">
 
+    <!-- القائمة الرئيسية -->
     <div id="mainMenu" class="screen active">
         <div class="text-center mb-6">
             <h1 class="text-6xl font-black tracking-tighter mb-2">أُحـجِـيَّـة</h1>
@@ -60,28 +68,43 @@
         </div>
         
         <div class="flex flex-col gap-4 w-72">
-            <button onclick="showScreen('mapScreen')" class="btn-main p-5 rounded-3xl text-xl shadow-xl">الـبـداية</button>
+            <button onclick="startNewGame()" class="btn-main p-5 rounded-3xl text-xl shadow-xl">الـبـداية</button>
             <button onclick="showScreen('settingsScreen')" class="glass p-4 rounded-3xl font-bold hover:bg-white/10 transition">الإعدادات</button>
             
             <a href="https://buymeacoffee.com/alaaabushama" target="_blank" class="bg-[#FFDD00] text-black p-3 rounded-2xl font-bold text-sm text-center shadow-lg hover:scale-105 transition-all">☕ ادعمنا لنستمر</a>
 
-            <div class="flex justify-center gap-8 mt-6">
-                <a href="https://www.tiktok.com/@abushamaa1" target="_blank" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
-                <a href="https://discord.gg/825DA82y5D" target="_blank" class="social-icon"><i class="fa-brands fa-discord"></i></a>
-                <a href="https://www.youtube.com/@gamer_77-q2p" target="_blank" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+            <div class="flex justify-center gap-6 mt-6">
+                <a href="https://www.tiktok.com/@abushamaa1" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <span>تيك توك</span>
+                </a>
+                <a href="https://discord.gg/825DA82y5D" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-discord"></i>
+                    <span>ديسكورد</span>
+                </a>
+                <a href="https://www.youtube.com/@gamer_77-q2p" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-youtube"></i>
+                    <span>يوتيوب</span>
+                </a>
             </div>
+            <p class="text-slate-500 text-xs mt-2 text-center">تابعني لمزيد من التحديثات! 🚀</p>
 
             <button onclick="exitGame()" class="text-slate-600 text-xs mt-6 hover:text-red-400 transition text-center font-bold">إغلاق اللعبة</button>
         </div>
     </div>
 
+    <!-- شاشة الإعدادات -->
     <div id="settingsScreen" class="screen">
         <div class="glass p-10 w-80 text-center border border-white/10">
             <h2 class="text-2xl font-black mb-8 text-indigo-400">الإعدادات</h2>
             <div class="space-y-6 text-right">
                 <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
-                    <span class="font-bold">الموسيقى</span>
+                    <span class="font-bold">🎵 الموسيقى</span>
                     <input type="checkbox" id="musicToggle" checked onchange="toggleMusic()" class="w-6 h-6 accent-indigo-500">
+                </div>
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
+                    <span class="font-bold">🔊 المؤثرات</span>
+                    <input type="checkbox" id="sfxToggle" checked onchange="toggleSFX()" class="w-6 h-6 accent-indigo-500">
                 </div>
                 <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
                     <span class="font-bold">تغيير الثيم</span>
@@ -95,38 +118,91 @@
         </div>
     </div>
 
+    <!-- شاشة الخريطة -->
     <div id="mapScreen" class="screen">
         <div class="w-full max-w-md mb-8 flex justify-between items-center px-4">
             <h2 class="text-2xl font-black italic text-indigo-400">المستويات</h2>
             <div class="bg-indigo-500/10 border border-indigo-500/30 px-4 py-1 rounded-2xl text-indigo-400 text-sm font-bold">💰 <span id="points">0</span></div>
         </div>
+        
         <div id="mapGrid" class="grid grid-cols-5 gap-4"></div>
         <button onclick="showScreen('mainMenu')" class="mt-12 text-slate-500 font-bold uppercase text-xs tracking-widest">الرئيسية</button>
     </div>
 
+    <!-- شاشة اللعبة -->
     <div id="gameScreen" class="screen">
+        <div class="back-button" onclick="showScreen('mapScreen')">
+            <i class="fas fa-arrow-right"></i>
+        </div>
+        
         <div class="glass p-10 w-full max-w-md text-center">
-            <div id="levelTitle" class="text-xs font-black text-slate-500 mb-6 tracking-widest uppercase">LEVEL 01</div>
+            <div class="flex justify-between items-center mb-4">
+                <div id="levelTitle" class="text-xs font-black text-slate-500 tracking-widest uppercase">LEVEL 01</div>
+                <div class="points-badge">
+                    <span>💰</span>
+                    <span id="currentPoints">0</span>
+                </div>
+            </div>
+            
             <h3 id="questionText" class="text-xl font-bold mb-10 leading-relaxed min-h-[80px] flex items-center justify-center">...</h3>
             <input type="text" id="answerInput" placeholder="اكتب الحل هنا..." class="w-full p-5 bg-white/5 rounded-2xl mb-4 border border-white/10 outline-none text-center text-xl focus:border-indigo-500 transition-all">
             <div class="flex gap-2">
                 <button onclick="checkAnswer()" class="flex-[3] bg-white text-black p-5 rounded-2xl font-black text-lg">تحقق</button>
-                <button onclick="openHint()" class="flex-1 bg-slate-800 p-5 rounded-2xl text-xl hover:bg-slate-700 transition">💡</button>
+                <button onclick="openHintConfirm()" class="flex-1 bg-slate-800 p-5 rounded-2xl text-xl hover:bg-slate-700 transition">💡</button>
             </div>
         </div>
     </div>
 
-    <div id="hintPopup" class="popup-hint">
-        <div class="glass p-8 text-center max-w-[320px] border-indigo-500/50 border">
-            <h3 class="text-xl font-black mb-4 text-indigo-400">💡 تلميحة المساعدة</h3>
-            <p id="hintText" class="text-lg mb-6 leading-relaxed">...</p>
-            <button onclick="closeHint()" class="btn-main w-full py-3 rounded-xl font-bold">رجوع</button>
+    <!-- شاشة الفوز -->
+    <div id="winScreen" class="screen">
+        <div class="glass p-12 text-center max-w-md border-4 border-yellow-400/30">
+            <div class="text-7xl mb-4">🏆</div>
+            <h2 class="text-4xl font-black mb-2 text-yellow-400">أنت العبقري!</h2>
+            <p class="text-slate-300 mb-6">لقد أكملت جميع المستويات بنجاح.</p>
+            <div class="bg-white/10 p-4 rounded-2xl mb-8">
+                <p class="text-2xl font-bold">مجموع نقاطك: <span class="text-yellow-400" id="finalPoints">0</span> 💰</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="resetGame()" class="flex-1 bg-indigo-600 p-4 rounded-2xl font-bold hover:bg-indigo-700 transition">🔁 إعادة اللعبة</button>
+                <button onclick="showScreen('mainMenu')" class="flex-1 bg-slate-700 p-4 rounded-2xl font-bold hover:bg-slate-600 transition">🏆 الرئيسية</button>
+            </div>
+            <p class="text-slate-500 text-sm mt-6">ترقبوا التحديثات القادمة... المزيد من التحديات!</p>
         </div>
     </div>
 
-    <audio id="bgMusic" loop src="https://cdn.pixabay.com/audio/2022/03/15/audio_732290457d.mp3"></audio>
+    <!-- نافذة تأكيد التلميحة (بتظهر الأول) -->
+    <div id="hintConfirmPopup" class="popup-overlay">
+        <div class="popup-box border-yellow-500/50 border-2">
+            <div class="text-5xl mb-4">💡</div>
+            <h3 class="text-2xl font-black mb-2 text-yellow-400">تأكيد فتح التلميحة</h3>
+            <p class="text-slate-300 mb-4">هل أنت متأكد من فتح التلميحة؟</p>
+            <div class="bg-yellow-500/20 p-3 rounded-xl mb-4">
+                <p class="text-sm">💰 تكلفة التلميحة: <span class="text-yellow-400 font-bold">5 نقاط</span></p>
+                <p class="text-sm">نقاطك الحالية: <span id="confirmPoints" class="text-yellow-400 font-bold">0</span></p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="useHint()" class="flex-1 bg-yellow-500 p-3 rounded-xl font-bold hover:bg-yellow-600 transition">✅ نعم، افتح</button>
+                <button onclick="closeHintConfirm()" class="flex-1 bg-slate-700 p-3 rounded-xl font-bold hover:bg-slate-600 transition">❌ إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة عرض التلميحة (بتظهر بعد الخصم) -->
+    <div id="hintViewPopup" class="popup-overlay">
+        <div class="popup-box border-indigo-500/50 border">
+            <h3 class="text-xl font-black mb-4 text-indigo-400">💡 تلميحة المساعدة</h3>
+            <p id="hintText" class="text-lg mb-6 leading-relaxed bg-white/5 p-4 rounded-xl">...</p>
+            <button onclick="closeHintView()" class="btn-main w-full py-3 rounded-xl font-bold">رجوع</button>
+        </div>
+    </div>
+
+    <!-- ملفات الصوت -->
+    <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_584b0e0b2b.mp3?filename=chill-abstract-intro-119277.mp3"></audio>
+    <audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_5e16b5f2c5.mp3?filename=correct-2-46128.mp3"></audio>
+    <audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_a6c7b088c2.mp3?filename=wrong-answer-126515.mp3"></audio>
 
     <script>
+        // جميع الأسئلة
         const allLevels = [
             {q: "ما هو الشيء الذي يزداد كلما أخذت منه؟", a: "الحفرة", h: "تجدها في الأرض!"},
             {q: "له عين واحدة ولكنه لا يرى؟", a: "الابرة", h: "تستخدم في الخياطة"},
@@ -155,22 +231,79 @@
             {q: "أنا ملكك لكن الآخرين يستخدمونني أكثر منك؟", a: "اسمي", h: "ينادونك به"}
         ];
 
+        // نظام النقاط
+        const POINTS_PER_CORRECT = 20;
+        const HINT_COST = 5;
+        
         let userProgress = parseInt(localStorage.getItem('brainQuestLvl')) || 1;
+        let userPoints = parseInt(localStorage.getItem('brainQuestPoints')) || 0;
+        let hintsUsed = parseInt(localStorage.getItem('brainQuestHintsUsed')) || 0;
         let activeLevel = 1;
+        
+        // إعدادات الصوت
+        let audioEnabled = false;
+        let sfxEnabled = true;
+        const bgMusic = document.getElementById('bgMusic');
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+        
+        bgMusic.volume = 0.2;
+        correctSound.volume = 0.4;
+        wrongSound.volume = 0.4;
 
+        // تفعيل الصوت عند أول تفاعل
+        function enableAudio() {
+            if (!audioEnabled) {
+                bgMusic.play().then(() => {
+                    audioEnabled = true;
+                    if (!document.getElementById('musicToggle').checked) {
+                        bgMusic.pause();
+                    }
+                }).catch(() => {});
+            }
+        }
+
+        document.addEventListener('click', function enableOnClick() {
+            enableAudio();
+            document.removeEventListener('click', enableOnClick);
+        }, { once: true });
+
+        // عرض الشاشات
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if(id === 'mapScreen') renderMap();
-            if(id !== 'mainMenu' && document.getElementById('musicToggle').checked) {
-                document.getElementById('bgMusic').play().catch(()=>{});
+            if(id === 'gameScreen') {
+                document.getElementById('currentPoints').innerText = userPoints;
+            }
+            if(id === 'winScreen') {
+                const totalPoints = userPoints;
+                document.getElementById('finalPoints').innerText = totalPoints;
             }
         }
 
+        // بداية لعبة جديدة
+        function startNewGame() {
+            userProgress = 1;
+            userPoints = 0;
+            hintsUsed = 0;
+            localStorage.setItem('brainQuestLvl', userProgress);
+            localStorage.setItem('brainQuestPoints', userPoints);
+            localStorage.setItem('brainQuestHintsUsed', hintsUsed);
+            showScreen('mapScreen');
+        }
+
+        // إعادة تعيين اللعبة
+        function resetGame() {
+            startNewGame();
+        }
+
+        // رسم الخريطة
         function renderMap() {
             const grid = document.getElementById('mapGrid');
             grid.innerHTML = '';
-            document.getElementById('points').innerText = (userProgress-1) * 50;
+            document.getElementById('points').innerText = userPoints;
+            
             for (let i = 1; i <= 25; i++) {
                 const node = document.createElement('div');
                 node.className = `level-node ${i < userProgress ? 'unlocked' : (i === userProgress ? 'current' : 'locked')}`;
@@ -180,28 +313,93 @@
             }
         }
 
+        // بدء مستوى
         function startLevel(lvlId) {
             activeLevel = lvlId;
             document.getElementById('levelTitle').innerText = `LEVEL ${lvlId < 10 ? '0'+lvlId : lvlId}`;
             document.getElementById('questionText').innerText = allLevels[lvlId-1].q;
             document.getElementById('answerInput').value = '';
+            document.getElementById('currentPoints').innerText = userPoints;
             showScreen('gameScreen');
         }
 
+        // التحقق من الإجابة
         function checkAnswer() {
-            const val = document.getElementById('answerInput').value.trim();
-            if (val === allLevels[activeLevel-1].a) {
-                if (activeLevel === userProgress && userProgress < 25) {
-                    userProgress++;
-                    localStorage.setItem('brainQuestLvl', userProgress);
+            const val = document.getElementById('answerInput').value.trim().toLowerCase().replace(/\s+/g, '');
+            const correctAnswer = allLevels[activeLevel-1].a.replace(/\s+/g, '');
+
+            if (val === correctAnswer) {
+                if (sfxEnabled && audioEnabled) {
+                    correctSound.play().catch(() => {});
                 }
-                alert("إجابة صحيحة! 🎉🧠");
-                showScreen('mapScreen');
+                
+                if (activeLevel === userProgress) {
+                    userPoints += POINTS_PER_CORRECT;
+                    localStorage.setItem('brainQuestPoints', userPoints);
+                    
+                    if (userProgress < 25) {
+                        userProgress++;
+                        localStorage.setItem('brainQuestLvl', userProgress);
+                        alert(`✅ إجابة صحيحة! +${POINTS_PER_CORRECT} نقطة`);
+                        showScreen('mapScreen');
+                    } else {
+                        showScreen('winScreen');
+                    }
+                } else {
+                    alert(`✅ إجابة صحيحة! +${POINTS_PER_CORRECT} نقطة`);
+                    showScreen('mapScreen');
+                }
             } else {
-                alert("خطأ! ركز وحاول مرة أخرى 🧐");
+                if (sfxEnabled && audioEnabled) {
+                    wrongSound.play().catch(() => {});
+                }
+                alert("❌ خطأ! ركز وحاول مرة أخرى");
             }
         }
 
+        // فتح نافذة تأكيد التلميحة
+        function openHintConfirm() {
+            // التحقق من وجود نقاط كافية أولاً
+            if (userPoints < HINT_COST) {
+                alert(`⚠️ نقاطك غير كافية! تحتاج ${HINT_COST} نقاط لفتح التلميحة. أجب على أسئلة أولاً.`);
+                return;
+            }
+            
+            // عرض نافذة التأكيد مع النقاط الحالية
+            document.getElementById('confirmPoints').innerText = userPoints;
+            document.getElementById('hintConfirmPopup').style.display = 'flex';
+        }
+
+        // استخدام التلميحة (خصم النقاط وعرض المحتوى)
+        function useHint() {
+            // خصم النقاط
+            userPoints -= HINT_COST;
+            hintsUsed++;
+            localStorage.setItem('brainQuestPoints', userPoints);
+            localStorage.setItem('brainQuestHintsUsed', hintsUsed);
+            
+            // تحديث عرض النقاط في شاشة اللعبة
+            document.getElementById('currentPoints').innerText = userPoints;
+            
+            // إغلاق نافذة التأكيد
+            closeHintConfirm();
+            
+            // عرض نافذة التلميحة مع النص
+            document.getElementById('hintText').innerText = allLevels[activeLevel-1].h;
+            document.getElementById('hintViewPopup').style.display = 'flex';
+        }
+
+        // إغلاق نافذة التأكيد
+        function closeHintConfirm() {
+            document.getElementById('hintConfirmPopup').style.display = 'none';
+        }
+
+        // إغلاق نافذة عرض التلميحة
+        function closeHintView() {
+            document.getElementById('hintViewPopup').style.display = 'none';
+        }
+
+        // تغيير الثيم
         function changeTheme() {
             const theme = document.getElementById('themeSelect').value;
             const body = document.getElementById('mainBody');
@@ -209,21 +407,24 @@
             localStorage.setItem('gameTheme', theme);
         }
 
+        // تشغيل/إيقاف الموسيقى
         function toggleMusic() {
-            const music = document.getElementById('bgMusic');
-            document.getElementById('musicToggle').checked ? music.play() : music.pause();
+            if (document.getElementById('musicToggle').checked) {
+                if (audioEnabled) bgMusic.play().catch(() => {});
+            } else {
+                bgMusic.pause();
+            }
         }
 
-        function openHint() {
-            document.getElementById('hintText').innerText = allLevels[activeLevel-1].h;
-            document.getElementById('hintPopup').style.display = 'flex';
+        // تشغيل/إيقاف المؤثرات
+        function toggleSFX() {
+            sfxEnabled = document.getElementById('sfxToggle').checked;
         }
 
-        function closeHint() { document.getElementById('hintPopup').style.display = 'none'; }
-
+        // الخروج من اللعبة
         function exitGame() {
             if(confirm("هل أنت متأكد من الخروج؟ راح نشتاق لك ولذكائك! 🥺✨")) {
-                window.close(); // يحاول إغلاق التطبيق
+                window.close();
                 setTimeout(() => { window.location.href = "about:blank"; }, 500);
             }
         }
@@ -234,9 +435,9 @@
                 document.getElementById('themeSelect').value = savedTheme;
                 changeTheme();
             }
+            
+            renderMap();
         };
-
-        renderMap();
     </script>
 </body>
 </html>
