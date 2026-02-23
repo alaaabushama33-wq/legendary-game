@@ -8,174 +8,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6366f1; --secondary: #ec4899; }
-        body { font-family: 'Tajawal', sans-serif; background: #020617; color: white; overflow-x: hidden; }
-        
-        .ai-bg {
-            background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
-            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5;
-        }
-
+        body { font-family: 'Tajawal', sans-serif; background: #020617; color: white; overflow: hidden; margin: 0; }
+        .ai-bg { background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .active { display: flex; animation: fadeIn 0.5s ease; }
-        
+        .active { display: flex; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; }
-        
-        .level-node {
-            width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: 900; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 3px solid transparent;
-        }
-        .unlocked { background: linear-gradient(135deg, #4f46e5, #3730a3); border-color: #818cf8; }
-        .current { background: linear-gradient(135deg, #ec4899, #be185d); border-color: #fbcfe8; transform: scale(1.15); box-shadow: 0 0 25px rgba(236, 72, 153, 0.5); }
-        .locked { background: #1e293b; color: #475569; border-color: #0f172a; cursor: not-allowed; }
-
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; }
+        .level-node { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .unlocked { background: #4f46e5; }
+        .current { background: #ec4899; box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); transform: scale(1.1); }
+        .locked { background: #1e293b; color: #475569; cursor: not-allowed; }
         .btn-main { background: linear-gradient(to right, var(--primary), var(--secondary)); transition: 0.3s; }
-        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
-
-        /* تنسيق حاويات الإعلانات */
-        .ad-sidebar { position: fixed; top: 50%; transform: translateY(-50%); z-index: 100; display: none; }
-        @media (min-width: 1200px) { .ad-sidebar { display: block; } }
-        .ad-banner-bottom { margin-top: 20px; }
-        
-        /* نافذة الإعلان المنبثقة */
-        .popup-ad {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-        .popup-content {
-            background: #1e1b4b;
-            padding: 30px;
-            border-radius: 30px;
-            max-width: 400px;
-            text-align: center;
-            border: 1px solid #818cf8;
-            animation: popIn 0.3s ease;
-        }
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .close-btn {
-            background: #ec4899;
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-        }
+        .btn-main:hover { transform: translateY(-2px); opacity: 0.9; }
+        .popup-hint { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
     <div class="ai-bg"></div>
 
-    <!-- الإعلان المنبثق للتلميحة -->
-    <div id="hintPopup" class="popup-ad">
-        <div class="popup-content">
-            <h3 class="text-2xl font-black mb-4">🔍 تلميحة الأحجية</h3>
-            <p id="hintText" class="text-xl mb-4 text-indigo-300">...</p>
-            <p class="text-sm text-gray-400 mb-4">تم عرض الإعلان للحصول على التلميحة</p>
-            <div id="hintAdContainer">
-                <script src="https://pl28774089.effectivegatecpm.com/b6/56/e7/b656e7eec12b8dac179e7dc38516efa4.js"></script>
-            </div>
-            <button onclick="closeHintPopup()" class="close-btn">إغلاق</button>
+    <div id="hintPopup" class="popup-hint">
+        <div class="glass p-8 text-center max-w-[320px] border-indigo-500/50 border">
+            <h3 class="text-xl font-black mb-4 text-indigo-400">💡 تلميحة المساعدة</h3>
+            <p id="hintText" class="text-lg mb-6 leading-relaxed">...</p>
+            <button onclick="closeHint()" class="btn-main w-full py-3 rounded-xl font-bold text-white">رجوع للعبة</button>
         </div>
     </div>
 
-    <div class="ad-sidebar" style="left: 10px;">
-        <script type="text/javascript">
-            atOptions = { 'key' : '39eb8d44cc61a2a6c8a6355d800a8452', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
-        </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/39eb8d44cc61a2a6c8a6355d800a8452/invoke.js"></script>
-    </div>
-
-    <div class="ad-sidebar" style="right: 10px;">
-        <script type="text/javascript">
-            atOptions = { 'key' : '39eb8d44cc61a2a6c8a6355d800a8452', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
-        </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/39eb8d44cc61a2a6c8a6355d800a8452/invoke.js"></script>
-    </div>
-
-    <audio id="bgMusic" loop src="https://cdn.pixabay.com/audio/2022/03/15/audio_732290457d.mp3"></audio> 
-    <audio id="sndCorrect" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
-    <audio id="sndClick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-
     <div id="mainMenu" class="screen active">
-        <div class="relative">
-            <div class="absolute -top-16 -left-16 w-32 h-32 bg-indigo-500/20 blur-3xl rounded-full"></div>
-            <h1 class="text-6xl font-black mb-2 text-center tracking-tighter">أُحـجِـيَّـة</h1>
-            <p class="text-indigo-400 font-bold tracking-[0.5em] text-center mb-12">BRAIN QUEST</p>
+        <div class="text-center mb-12">
+            <h1 class="text-6xl font-black tracking-tighter mb-2">أُحـجِـيَّـة</h1>
+            <p class="text-indigo-400 font-bold tracking-[0.3em] text-sm uppercase">Brain Quest</p>
         </div>
         
         <div class="flex flex-col gap-4 w-72">
-            <button onclick="startGame()" class="btn-main p-5 rounded-3xl font-black text-xl shadow-xl">الـبـداية</button>
-            <button onclick="showScreen('settingsScreen')" class="glass p-4 rounded-3xl font-bold border border-white/10 hover:bg-white/5 transition">الإعدادات</button>
-            <button onclick="window.close()" class="text-slate-500 text-sm mt-4 hover:text-red-400 transition text-center">إغلاق التطبيق</button>
-        </div>
-
-        <div class="ad-banner-bottom">
-            <script type="text/javascript">
-                atOptions = { 'key' : '5e24f6ea5a96bb14738bb1e29cbaa670', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-            </script>
-            <script type="text/javascript" src="https://www.highperformanceformat.com/5e24f6ea5a96bb14738bb1e29cbaa670/invoke.js"></script>
-        </div>
-    </div>
-
-    <div id="mapScreen" class="screen">
-        <div class="w-full max-w-md mb-10 flex justify-between items-center px-4">
-            <h2 class="text-2xl font-black italic">المستويات</h2>
-            <div class="bg-indigo-500/10 border border-indigo-500/30 px-4 py-1 rounded-2xl text-indigo-400 text-sm">💰 <span id="points">0</span></div>
-        </div>
-        <div id="mapGrid" class="grid grid-cols-5 gap-6 p-2"></div>
-        <button onclick="showScreen('mainMenu')" class="mt-12 text-slate-500 uppercase text-xs tracking-widest font-bold">العودة للرئيسية</button>
-    </div>
-
-    <div id="gameScreen" class="screen">
-        <div class="glass p-10 w-full max-w-md text-center relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-pink-500" id="lvlBar"></div>
-            <div id="levelTitle" class="text-xs font-black text-slate-500 mb-6 tracking-[0.3em]">LEVEL 01</div>
-            <h3 id="questionText" class="text-2xl font-bold mb-10 leading-relaxed h-24 flex items-center justify-center">...</h3>
-            <input type="text" id="answerInput" autocomplete="off" placeholder="اكتب الحل هنا..." class="w-full p-5 bg-white/5 rounded-2xl mb-4 border border-white/10 outline-none text-center text-xl focus:border-indigo-500 transition-all">
-            <div class="flex gap-2">
-                <button onclick="checkAnswer()" class="flex-[3] bg-white text-black p-5 rounded-2xl font-black text-lg hover:bg-indigo-100 transition">تأكيد الإجابة</button>
-                <button onclick="showHintWithAd()" class="flex-1 bg-slate-800 p-5 rounded-2xl font-bold text-sm border border-slate-700 relative group">
-                    💡
-                    <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-pink-500 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                        تلميحة + إعلان
-                    </span>
-                </button>
-            </div>
-            <p class="text-xs text-gray-500 mt-4">اضغط على 💡 لمشاهدة إعلان والحصول على تلميحة</p>
+            <button onclick="showScreen('mapScreen')" class="btn-main p-5 rounded-3xl font-black text-xl shadow-xl text-white">الـبـداية</button>
+            <button onclick="showScreen('settingsScreen')" class="glass p-4 rounded-3xl font-bold hover:bg-white/10 transition">الإعدادات</button>
+            <button onclick="exitGame()" class="text-slate-500 text-sm mt-4 hover:text-red-400 transition text-center font-bold">إغلاق اللعبة</button>
         </div>
     </div>
 
     <div id="settingsScreen" class="screen">
         <div class="glass p-10 w-80">
             <h2 class="text-xl font-black mb-8 text-center">الإعدادات</h2>
-            <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl">
-                <span class="font-bold">الموسيقى الهادئة</span>
+            <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl mb-6">
+                <span class="font-bold">الموسيقى</span>
                 <input type="checkbox" id="musicToggle" checked onchange="toggleMusic()" class="w-6 h-6 accent-indigo-500">
             </div>
-            <button onclick="showScreen('mainMenu')" class="w-full btn-main p-4 rounded-2xl mt-8 font-black">تم</button>
+            <button onclick="showScreen('mainMenu')" class="w-full btn-main p-4 rounded-2xl font-black text-white">حفظ</button>
         </div>
     </div>
 
+    <div id="mapScreen" class="screen">
+        <div class="w-full max-w-md mb-8 flex justify-between items-center px-4">
+            <h2 class="text-2xl font-black italic text-indigo-400">المستويات</h2>
+            <div class="bg-indigo-500/10 border border-indigo-500/30 px-4 py-1 rounded-2xl text-indigo-400 text-sm">💰 <span id="points">0</span></div>
+        </div>
+        <div id="mapGrid" class="grid grid-cols-5 gap-4"></div>
+        <button onclick="showScreen('mainMenu')" class="mt-12 text-slate-500 uppercase text-xs font-bold tracking-widest">الرئيسية</button>
+    </div>
+
+    <div id="gameScreen" class="screen">
+        <div class="glass p-10 w-full max-w-md text-center">
+            <div id="levelTitle" class="text-xs font-black text-slate-500 mb-6 tracking-widest uppercase">LEVEL 01</div>
+            <h3 id="questionText" class="text-xl font-bold mb-10 leading-relaxed min-h-[80px] flex items-center justify-center">...</h3>
+            
+            <input type="text" id="answerInput" placeholder="اكتب الحل هنا..." class="w-full p-5 bg-white/5 rounded-2xl mb-4 border border-white/10 outline-none text-center text-xl focus:border-indigo-500 transition-all">
+            
+            <div class="flex gap-2">
+                <button onclick="checkAnswer()" class="flex-[3] bg-white text-black p-5 rounded-2xl font-black text-lg">تحقق</button>
+                <button onclick="openHint()" class="flex-1 bg-slate-800 p-5 rounded-2xl text-xl hover:bg-slate-700 transition">💡</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop src="https://cdn.pixabay.com/audio/2022/03/15/audio_732290457d.mp3"></audio>
+
     <script>
-        // مصفوفة الأسئلة والمنطق البرمجي
         const allLevels = [
             {q: "ما هو الشيء الذي يزداد كلما أخذت منه؟", a: "الحفرة", h: "تجدها في الأرض!"},
             {q: "له عين واحدة ولكنه لا يرى؟", a: "الابرة", h: "تستخدم في الخياطة"},
@@ -206,23 +115,14 @@
 
         let userProgress = parseInt(localStorage.getItem('brainQuestLvl')) || 1;
         let activeLevel = 1;
-        const bgMusic = document.getElementById('bgMusic');
-
-        function startGame() {
-            if(document.getElementById('musicToggle').checked) bgMusic.play().catch(e => {});
-            document.getElementById('sndClick').play();
-            showScreen('mapScreen');
-        }
-
-        function toggleMusic() {
-            if(!document.getElementById('musicToggle').checked) bgMusic.pause();
-            else bgMusic.play();
-        }
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if(id === 'mapScreen') renderMap();
+            if(id !== 'mainMenu' && document.getElementById('musicToggle').checked) {
+                document.getElementById('bgMusic').play().catch(()=>{});
+            }
         }
 
         function renderMap() {
@@ -232,8 +132,8 @@
             for (let i = 1; i <= 25; i++) {
                 const node = document.createElement('div');
                 node.className = `level-node ${i < userProgress ? 'unlocked' : (i === userProgress ? 'current' : 'locked')}`;
-                node.innerHTML = `<span>${i}</span>`;
-                if (i <= userProgress) node.onclick = () => { document.getElementById('sndClick').play(); startLevel(i); };
+                node.innerText = i;
+                if (i <= userProgress) node.onclick = () => startLevel(i);
                 grid.appendChild(node);
             }
         }
@@ -243,43 +143,49 @@
             document.getElementById('levelTitle').innerText = `LEVEL ${lvlId < 10 ? '0'+lvlId : lvlId}`;
             document.getElementById('questionText').innerText = allLevels[lvlId-1].q;
             document.getElementById('answerInput').value = '';
-            document.getElementById('lvlBar').style.width = (lvlId/25)*100 + "%";
             showScreen('gameScreen');
         }
 
         function checkAnswer() {
-            const input = document.getElementById('answerInput').value.trim();
-            if (input === allLevels[activeLevel-1].a) {
-                document.getElementById('sndCorrect').play();
+            const val = document.getElementById('answerInput').value.trim();
+            if (val === allLevels[activeLevel-1].a) {
                 if (activeLevel === userProgress && userProgress < 25) {
                     userProgress++;
                     localStorage.setItem('brainQuestLvl', userProgress);
                 }
-                alert("إجابة صحيحة!");
+                alert("إجابة صحيحة! 🧠✨");
                 showScreen('mapScreen');
             } else {
-                alert("حاول مجدداً!");
+                alert("خطأ! حاول مجدداً 🧐");
             }
         }
 
-        function getHint() { 
-            alert("تلميح: " + allLevels[activeLevel-1].h); 
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            document.getElementById('musicToggle').checked ? music.play() : music.pause();
         }
 
-        // دالة جديدة لعرض التلميحة مع الإعلان
-        function showHintWithAd() {
-            // عرض نافذة الإعلان المنبثقة
-            document.getElementById('hintPopup').style.display = 'flex';
+        function openHint() {
+            // تنفيذ كود التلميحة الإعلاني
+            if (typeof pqm2R3 === 'function') {
+                pqm2R3(); // استدعاء وظيفة السكربت الإعلاني إذا كانت متاحة
+            }
             document.getElementById('hintText').innerText = allLevels[activeLevel-1].h;
-            document.getElementById('sndClick').play();
+            document.getElementById('hintPopup').style.display = 'flex';
         }
 
-        // دالة لإغلاق النافذة المنبثقة
-        function closeHintPopup() {
-            document.getElementById('hintPopup').style.display = 'none';
+        function closeHint() { document.getElementById('hintPopup').style.display = 'none'; }
+
+        function exitGame() {
+            if(confirm("هل تريد مغادرة عالم الألغاز؟")) {
+                window.location.href = "https://www.google.com";
+            }
         }
 
         renderMap();
     </script>
+
+    <script src="https://pl28774089.effectivegatecpm.com/b6/56/e7/b656e7eec12b8dac179e7dc38516efa4.js"></script>
+
 </body>
 </html>
