@@ -6,79 +6,121 @@
     <title>أحجية العقل 🧠</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #6366f1; --secondary: #ec4899; }
-        body { font-family: 'Tajawal', sans-serif; background: #020617; color: white; overflow: hidden; margin: 0; }
-        .ai-bg { background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        :root { 
+            --primary: #6366f1; 
+            --secondary: #ec4899; 
+            --bg-gradient: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%); 
+        }
+        /* الثيم الملكي */
+        .theme-royal { 
+            --primary: #8b5cf6; 
+            --secondary: #3b82f6; 
+            --bg-gradient: linear-gradient(135deg, #2e1065 0%, #020617 100%); 
+        }
+        
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background: var(--bg-gradient); 
+            color: white; 
+            transition: all 0.5s ease; 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+        
         .screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .active { display: flex; animation: fadeIn 0.3s ease; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; }
+        .btn-main { background: linear-gradient(to right, var(--primary), var(--secondary)); transition: 0.3s; color: white; font-weight: bold; }
+        .btn-main:hover { transform: translateY(-2px); opacity: 0.9; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        
         .level-node { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .unlocked { background: #4f46e5; }
-        .current { background: #ec4899; box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); transform: scale(1.1); }
+        .unlocked { background: var(--primary); }
+        .current { background: var(--secondary); box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); transform: scale(1.1); }
         .locked { background: #1e293b; color: #475569; cursor: not-allowed; }
-        .btn-main { background: linear-gradient(to right, var(--primary), var(--secondary)); transition: 0.3s; }
-        .btn-main:hover { transform: translateY(-2px); opacity: 0.9; }
+        
+        .social-icon { transition: 0.3s; font-size: 1.8rem; opacity: 0.8; color: white; }
+        .social-icon:hover { opacity: 1; transform: translateY(-5px); color: var(--secondary); }
+        
         .popup-hint { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
     </style>
 </head>
-<body>
-
-    <div class="ai-bg"></div>
-
-    <div id="hintPopup" class="popup-hint">
-        <div class="glass p-8 text-center max-w-[320px] border-indigo-500/50 border">
-            <h3 class="text-xl font-black mb-4 text-indigo-400">💡 تلميحة المساعدة</h3>
-            <p id="hintText" class="text-lg mb-6 leading-relaxed">...</p>
-            <button onclick="closeHint()" class="btn-main w-full py-3 rounded-xl font-bold text-white">رجوع للعبة</button>
-        </div>
-    </div>
+<body id="mainBody">
 
     <div id="mainMenu" class="screen active">
-        <div class="text-center mb-12">
+        <div class="text-center mb-6">
             <h1 class="text-6xl font-black tracking-tighter mb-2">أُحـجِـيَّـة</h1>
-            <p class="text-indigo-400 font-bold tracking-[0.3em] text-sm uppercase">Brain Quest</p>
+            <p class="text-indigo-400 font-bold tracking-[0.3em] text-sm uppercase mb-4">Brain Quest</p>
+            <p class="text-slate-400 italic text-sm">"وَفِي السَّمَاءِ رِزْقُكُمْ وَمَا تُوعَدُونَ"</p>
         </div>
         
         <div class="flex flex-col gap-4 w-72">
-            <button onclick="showScreen('mapScreen')" class="btn-main p-5 rounded-3xl font-black text-xl shadow-xl text-white">الـبـداية</button>
+            <button onclick="showScreen('mapScreen')" class="btn-main p-5 rounded-3xl text-xl shadow-xl">الـبـداية</button>
             <button onclick="showScreen('settingsScreen')" class="glass p-4 rounded-3xl font-bold hover:bg-white/10 transition">الإعدادات</button>
-            <button onclick="exitGame()" class="text-slate-500 text-sm mt-4 hover:text-red-400 transition text-center font-bold">إغلاق اللعبة</button>
+            
+            <a href="https://buymeacoffee.com/alaaabushama" target="_blank" class="bg-[#FFDD00] text-black p-3 rounded-2xl font-bold text-sm text-center shadow-lg hover:scale-105 transition-all">☕ ادعمنا لنستمر</a>
+
+            <div class="flex justify-center gap-8 mt-6">
+                <a href="https://www.tiktok.com/@abushamaa1" target="_blank" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://discord.gg/825DA82y5D" target="_blank" class="social-icon"><i class="fa-brands fa-discord"></i></a>
+                <a href="https://www.youtube.com/@gamer_77-q2p" target="_blank" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+
+            <button onclick="exitGame()" class="text-slate-600 text-xs mt-6 hover:text-red-400 transition text-center font-bold">إغلاق اللعبة</button>
         </div>
     </div>
 
     <div id="settingsScreen" class="screen">
-        <div class="glass p-10 w-80">
-            <h2 class="text-xl font-black mb-8 text-center">الإعدادات</h2>
-            <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl mb-6">
-                <span class="font-bold">الموسيقى</span>
-                <input type="checkbox" id="musicToggle" checked onchange="toggleMusic()" class="w-6 h-6 accent-indigo-500">
+        <div class="glass p-10 w-80 text-center border border-white/10">
+            <h2 class="text-2xl font-black mb-8 text-indigo-400">الإعدادات</h2>
+            <div class="space-y-6 text-right">
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
+                    <span class="font-bold">الموسيقى</span>
+                    <input type="checkbox" id="musicToggle" checked onchange="toggleMusic()" class="w-6 h-6 accent-indigo-500">
+                </div>
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
+                    <span class="font-bold">تغيير الثيم</span>
+                    <select id="themeSelect" onchange="changeTheme()" class="bg-slate-800 text-sm rounded-lg p-1 outline-none">
+                        <option value="default">الليل الغامق</option>
+                        <option value="royal">بنفسجي ملكي</option>
+                    </select>
+                </div>
             </div>
-            <button onclick="showScreen('mainMenu')" class="w-full btn-main p-4 rounded-2xl font-black text-white">حفظ</button>
+            <button onclick="showScreen('mainMenu')" class="btn-main w-full p-4 rounded-2xl mt-10">حـفـظ</button>
         </div>
     </div>
 
     <div id="mapScreen" class="screen">
         <div class="w-full max-w-md mb-8 flex justify-between items-center px-4">
             <h2 class="text-2xl font-black italic text-indigo-400">المستويات</h2>
-            <div class="bg-indigo-500/10 border border-indigo-500/30 px-4 py-1 rounded-2xl text-indigo-400 text-sm">💰 <span id="points">0</span></div>
+            <div class="bg-indigo-500/10 border border-indigo-500/30 px-4 py-1 rounded-2xl text-indigo-400 text-sm font-bold">💰 <span id="points">0</span></div>
         </div>
         <div id="mapGrid" class="grid grid-cols-5 gap-4"></div>
-        <button onclick="showScreen('mainMenu')" class="mt-12 text-slate-500 uppercase text-xs font-bold tracking-widest">الرئيسية</button>
+        <button onclick="showScreen('mainMenu')" class="mt-12 text-slate-500 font-bold uppercase text-xs tracking-widest">الرئيسية</button>
     </div>
 
     <div id="gameScreen" class="screen">
         <div class="glass p-10 w-full max-w-md text-center">
             <div id="levelTitle" class="text-xs font-black text-slate-500 mb-6 tracking-widest uppercase">LEVEL 01</div>
             <h3 id="questionText" class="text-xl font-bold mb-10 leading-relaxed min-h-[80px] flex items-center justify-center">...</h3>
-            
             <input type="text" id="answerInput" placeholder="اكتب الحل هنا..." class="w-full p-5 bg-white/5 rounded-2xl mb-4 border border-white/10 outline-none text-center text-xl focus:border-indigo-500 transition-all">
-            
             <div class="flex gap-2">
                 <button onclick="checkAnswer()" class="flex-[3] bg-white text-black p-5 rounded-2xl font-black text-lg">تحقق</button>
                 <button onclick="openHint()" class="flex-1 bg-slate-800 p-5 rounded-2xl text-xl hover:bg-slate-700 transition">💡</button>
             </div>
+        </div>
+    </div>
+
+    <div id="hintPopup" class="popup-hint">
+        <div class="glass p-8 text-center max-w-[320px] border-indigo-500/50 border">
+            <h3 class="text-xl font-black mb-4 text-indigo-400">💡 تلميحة المساعدة</h3>
+            <p id="hintText" class="text-lg mb-6 leading-relaxed">...</p>
+            <button onclick="closeHint()" class="btn-main w-full py-3 rounded-xl font-bold">رجوع</button>
         </div>
     </div>
 
@@ -153,11 +195,18 @@
                     userProgress++;
                     localStorage.setItem('brainQuestLvl', userProgress);
                 }
-                alert("إجابة صحيحة! 🧠✨");
+                alert("إجابة صحيحة! 🎉🧠");
                 showScreen('mapScreen');
             } else {
-                alert("خطأ! حاول مجدداً 🧐");
+                alert("خطأ! ركز وحاول مرة أخرى 🧐");
             }
+        }
+
+        function changeTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            const body = document.getElementById('mainBody');
+            body.className = (theme === 'royal') ? 'theme-royal' : '';
+            localStorage.setItem('gameTheme', theme);
         }
 
         function toggleMusic() {
@@ -166,10 +215,6 @@
         }
 
         function openHint() {
-            // تنفيذ كود التلميحة الإعلاني
-            if (typeof pqm2R3 === 'function') {
-                pqm2R3(); // استدعاء وظيفة السكربت الإعلاني إذا كانت متاحة
-            }
             document.getElementById('hintText').innerText = allLevels[activeLevel-1].h;
             document.getElementById('hintPopup').style.display = 'flex';
         }
@@ -177,15 +222,21 @@
         function closeHint() { document.getElementById('hintPopup').style.display = 'none'; }
 
         function exitGame() {
-            if(confirm("هل تريد مغادرة عالم الألغاز؟")) {
-                window.location.href = "https://www.google.com";
+            if(confirm("هل أنت متأكد من الخروج؟ راح نشتاق لك ولذكائك! 🥺✨")) {
+                window.close(); // يحاول إغلاق التطبيق
+                setTimeout(() => { window.location.href = "about:blank"; }, 500);
             }
         }
 
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('gameTheme');
+            if(savedTheme) {
+                document.getElementById('themeSelect').value = savedTheme;
+                changeTheme();
+            }
+        };
+
         renderMap();
     </script>
-
-    <script src="https://pl28774089.effectivegatecpm.com/b6/56/e7/b656e7eec12b8dac179e7dc38516efa4.js"></script>
-
 </body>
 </html>
