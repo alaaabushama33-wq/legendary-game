@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أحجية العقل 🧠</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --secondary: #ec4899; }
+        body { font-family: 'Tajawal', sans-serif; background: #020617; color: white; overflow: hidden; }
+        
+        /* خلفية الذكاء الاصطناعي المتحركة */
+        .ai-bg {
+            background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5;
+        }
+
+        .screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .active { display: flex; animation: fadeIn 0.5s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; }
+        
+        /* تصميم المستويات المطوّر */
+        .level-node {
+            width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid transparent;
+        }
+        .unlocked { background: linear-gradient(135deg, #4f46e5, #3730a3); border-color: #818cf8; }
+        .current { background: linear-gradient(135deg, #ec4899, #be185d); border-color: #fbcfe8; transform: scale(1.15); box-shadow: 0 0 25px rgba(236, 72, 153, 0.5); }
+        .locked { background: #1e293b; color: #475569; border-color: #0f172a; cursor: not-allowed; }
+
+        .btn-main { background: linear-gradient(to right, var(--primary), var(--secondary)); transition: 0.3s; }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+    </style>
+</head>
+<body>
+
+    <div class="ai-bg"></div>
+
+    <audio id="bgMusic" loop src="https://cdn.pixabay.com/audio/2022/03/15/audio_732290457d.mp3"></audio> <audio id="sndCorrect" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="sndClick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+
+    <div id="mainMenu" class="screen active">
+        <div class="relative">
+            <div class="absolute -top-16 -left-16 w-32 h-32 bg-indigo-500/20 blur-3xl rounded-full"></div>
+            <h1 class="text-6xl font-black mb-2 text-center tracking-tighter">أُحـجِـيَّـة</h1>
+            <p class="text-indigo-400 font-bold tracking-[0.5em] text-center mb-12">BRAIN QUEST</p>
+        </div>
+        
+        <div class="flex flex-col gap-4 w-72">
+            <button onclick="startGame()" class="btn-main p-5 rounded-3xl font-black text-xl shadow-xl">الـبـداية</button>
+            <button onclick="showScreen('settingsScreen')" class="glass p-4 rounded-3xl font-bold border border-white/10 hover:bg-white/5 transition">الإعدادات</button>
+            <button onclick="window.close()" class="text-slate-500 text-sm mt-4 hover:text-red-400 transition">إغلاق التطبيق</button>
+        </div>
+    </div>
+
+    <div id="mapScreen" class="screen">
+        <div class="w-full max-w-md mb-10 flex justify-between items-center px-4">
+            <h2 class="text-2xl font-black italic">المستويات</h2>
+            <div class="bg-indigo-500/10 border border-indigo-500/30 px-4 py-1 rounded-2xl text-indigo-400 text-sm">💰 <span id="points">0</span></div>
+        </div>
+        <div id="mapGrid" class="grid grid-cols-5 gap-6 p-2"></div>
+        <button onclick="showScreen('mainMenu')" class="mt-12 text-slate-500 uppercase text-xs tracking-widest font-bold">العودة للرئيسية</button>
+    </div>
+
+    <div id="gameScreen" class="screen">
+        <div class="glass p-10 w-full max-w-md text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-right from-indigo-500 to-pink-500" id="lvlBar"></div>
+            <div id="levelTitle" class="text-xs font-black text-slate-500 mb-6 tracking-[0.3em]">LEVEL 01</div>
+            <h3 id="questionText" class="text-2xl font-bold mb-10 leading-relaxed h-24 flex items-center justify-center">...</h3>
+            
+            <input type="text" id="answerInput" autocomplete="off" placeholder="اكتب الحل هنا..." 
+                   class="w-full p-5 bg-white/5 rounded-2xl mb-4 border border-white/10 outline-none text-center text-xl focus:border-indigo-500 transition-all">
+            
+            <div class="flex gap-2">
+                <button onclick="checkAnswer()" class="flex-[3] bg-white text-black p-5 rounded-2xl font-black text-lg hover:bg-indigo-100 transition">تأكيد الإجابة</button>
+                <button onclick="getHint()" class="flex-1 bg-slate-800 p-5 rounded-2xl font-bold text-sm border border-slate-700">💡</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsScreen" class="screen">
+        <div class="glass p-10 w-80">
+            <h2 class="text-xl font-black mb-8 text-center">الإعدادات</h2>
+            <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl">
+                <span class="font-bold">الموسيقى الهادئة</span>
+                <input type="checkbox" id="musicToggle" checked onchange="toggleMusic()" class="w-6 h-6 accent-indigo-500">
+            </div>
+            <button onclick="showScreen('mainMenu')" class="w-full btn-main p-4 rounded-2xl mt-8 font-black">تم</button>
+        </div>
+    </div>
+
+    <script>
+        // الأسئلة مع التلميحات
+        const allLevels = [
+            {q: "ما هو الشيء الذي يزداد كلما أخذت منه؟", a: "الحفرة", h: "تجدها في الأرض!"},
+            {q: "له عين واحدة ولكنه لا يرى؟", a: "الابرة", h: "تستخدم في الخياطة"},
+            {q: "ما هو الشيء الذي يقرصك ولا تراه؟", a: "الجوع", h: "يحدث عندما لا تأكل"},
+            {q: "كلمة من 5 أحرف إذا حذفت حرفين يبقى حرف؟", a: "الحرف", h: "فكر في معنى الكلمة نفسها"},
+            {q: "ما هو الشيء الذي كلما كثر حراسه ضاع؟", a: "السر", h: "لا تخبر به أحداً"},
+            {q: "يسير بلا أرجل ويدخل الأذن فقط؟", a: "الصوت", h: "تسمعه الآن"},
+            {q: "ما هو الشيء الذي ينبض بلا قلب؟", a: "الساعة", h: "تخبرك بالوقت"},
+            {q: "من هو الخال الوحيد لأولاد عمتك؟", a: "ابوك", h: "صلة قرابة مباشرة"},
+            {q: "ما هو الشيء الذي يحمل طعامه فوق رأسه؟", a: "قلم الحبر", h: "تكتب به"},
+            {q: "ما هو الشيء الذي له أسنان ولا يعض؟", a: "المشط", h: "لتسريح الشعر"},
+            {q: "بحر لا يوجد به ماء، أين يقع؟", a: "الخريطة", h: "ورقة مرسومة"},
+            {q: "ما هو الشيء الذي يكتب ولا يقرأ؟", a: "القلم", h: "أداة الكتابة"},
+            {q: "شيء إذا غليته جمد؟", a: "البيض", h: "فطور لذيذ"},
+            {q: "قلبه أبيض وجسمه أسود ورأسه أخضر؟", a: "الباذنجان", h: "نوع من الخضار"},
+            {q: "ما هو الشيء الذي ليس له بداية ولا نهاية؟", a: "الدائرة", h: "شكل هندسي"},
+            {q: "يتحرك دائماً حولك لكنك لا تراه؟", a: "الهواء", h: "نحن نتنفسه"},
+            {q: "ما هو الشيء الذي يمتلك مدناً بلا بيوت؟", a: "الخريطة", h: "رسم للأرض"},
+            {q: "شيء تذبحه وتبكي عليه؟", a: "البصل", h: "موجود في المطبخ"},
+            {q: "ما هو الشيء الذي يمشي ورأسك تحته؟", a: "الحذاء", h: "ترتديه في قدمك"},
+            {q: "تراه في الليل 3 مرات وفي النهار مرة؟", a: "حرف الياء", h: "ركز في حروف الكلمتين"},
+            {q: "ما هو الكائن الذي يشم بلسانه؟", a: "الثعبان", h: "حيوان زاحف"},
+            {q: "ما هو الشيء الذي ينكسر بمجرد النطق باسمه؟", a: "الصمت", h: "عكس الضجيج"},
+            {q: "مدينة حمراء، أسوارها خضراء، سكانها سود؟", a: "البطيخ", h: "فاكهة صيفية"},
+            {q: "شيء نأكله ولا يؤكل؟", a: "الصحن", h: "نضع فيه الطعام"},
+            {q: "أنا ملكك لكن الآخرين يستخدمونني أكثر منك؟", a: "اسمي", h: "ينادونك به"}
+        ];
+
+        let userProgress = parseInt(localStorage.getItem('brainQuestLvl')) || 1;
+        let activeLevel = 1;
+        const bgMusic = document.getElementById('bgMusic');
+
+        function startGame() {
+            if(document.getElementById('musicToggle').checked) bgMusic.play();
+            document.getElementById('sndClick').play();
+            showScreen('mapScreen');
+        }
+
+        function toggleMusic() {
+            if(!document.getElementById('musicToggle').checked) bgMusic.pause();
+            else bgMusic.play();
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'mapScreen') renderMap();
+        }
+
+        function renderMap() {
+            const grid = document.getElementById('mapGrid');
+            grid.innerHTML = '';
+            document.getElementById('points').innerText = (userProgress-1) * 50;
+            
+            for (let i = 1; i <= 25; i++) {
+                const node = document.createElement('div');
+                node.className = `level-node ${i < userProgress ? 'unlocked' : (i === userProgress ? 'current' : 'locked')}`;
+                node.innerHTML = `<span>${i}</span>`;
+                if (i <= userProgress) node.onclick = () => { document.getElementById('sndClick').play(); startLevel(i); };
+                grid.appendChild(node);
+            }
+        }
+
+        function startLevel(lvlId) {
+            activeLevel = lvlId;
+            document.getElementById('levelTitle').innerText = `LEVEL ${lvlId < 10 ? '0'+lvlId : lvlId}`;
+            document.getElementById('questionText').innerText = allLevels[lvlId-1].q;
+            document.getElementById('answerInput').value = '';
+            document.getElementById('lvlBar').style.width = (lvlId/25)*100 + "%";
+            showScreen('gameScreen');
+        }
+
+        function checkAnswer() {
+            const input = document.getElementById('answerInput').value.trim();
+            if (input === allLevels[activeLevel-1].a) {
+                document.getElementById('sndCorrect').play();
+                if (activeLevel === userProgress && userProgress < 25) {
+                    userProgress++;
+                    localStorage.setItem('brainQuestLvl', userProgress);
+                }
+                alert("إجابة صحيحة! مذهل.");
+                showScreen('mapScreen');
+            } else {
+                alert("حاول مجدداً، الحل ليس بعيداً!");
+            }
+        }
+
+        function getHint() {
+            alert("تلميح: " + allLevels[activeLevel-1].h);
+        }
+
+        renderMap();
+    </script>
+</body>
+</html>
