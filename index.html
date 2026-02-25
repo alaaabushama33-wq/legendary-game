@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أحجية العقل 🧠</title>
+    <title>أحجية العقل 🧠 | تحكم كامل بالصوت</title>
+    <!-- تنبيه: هذا للتطوير فقط -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         :root { 
             --primary: #6366f1; 
             --secondary: #ec4899; 
@@ -26,7 +33,6 @@
             transition: all 0.5s ease; 
             min-height: 100vh; 
             margin: 0; 
-            overflow: hidden; 
         }
         
         .screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
@@ -55,13 +61,213 @@
         .back-button:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
         
         .points-badge { background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); padding: 4px 12px; border-radius: 50px; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px; }
+        
+        /* شاشة البداية المرعبة */
+        .horror-start {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+        
+        .horror-content {
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .warning-text {
+            color: #ff4444;
+            font-size: 2rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px red;
+            margin-bottom: 20px;
+        }
+        
+        .click-anywhere {
+            color: #666;
+            font-size: 1rem;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .scary-icon {
+            font-size: 5rem;
+            color: #ff4444;
+            filter: drop-shadow(0 0 30px red);
+            margin-bottom: 20px;
+        }
+        
+        /* شاشة القفل المؤقت */
+        .lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .lock-content {
+            background: rgba(255,0,0,0.1);
+            border: 2px solid red;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        
+        /* تحكم الصوت الجديد */
+        .volume-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .setting-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .setting-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .volume-value {
+            background: var(--primary);
+            padding: 2px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+        
+        .production-warning { 
+            background: rgba(255, 200, 0, 0.2); 
+            border: 1px solid rgba(255, 200, 0, 0.3); 
+            border-radius: 50px; 
+            padding: 4px 12px; 
+            font-size: 0.7rem; 
+            color: #ffd966; 
+            margin-top: 10px; 
+        }
+        
+        /* toggle switch مخصص */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
     </style>
 </head>
 <body id="mainBody">
 
+    <!-- شاشة البداية المرعبة - أول كبسة -->
+    <div id="horrorStart" class="horror-start" onclick="handleFirstClick()">
+        <div class="horror-content">
+            <div class="scary-icon">👻</div>
+            <div class="warning-text">⚠️ تحذير ⚠️</div>
+            <div class="text-white text-xl mb-4">أنت على وشك دخول عالم الرعب!</div>
+            <div class="text-red-500 text-2xl font-black mb-8">اضغط في أي مكان</div>
+            <div class="click-anywhere">(ولكن احذر... الصوت سيكون مرعباً جداً)</div>
+            <div class="text-gray-600 text-sm mt-8">اضغط مرة واحدة فقط لتفعيل الصوت</div>
+        </div>
+    </div>
+
+    <!-- شاشة القفل المؤقت بعد الصوت المرعب -->
+    <div id="lockScreen" class="lock-screen">
+        <div class="lock-content">
+            <div class="text-6xl mb-4">😱</div>
+            <div class="text-red-500 text-3xl font-black mb-4">هل خفت؟</div>
+            <div class="text-white text-xl mb-6">اللعبة ستفتح خلال 3 ثوان...</div>
+            <div class="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        </div>
+    </div>
+
     <!-- القائمة الرئيسية -->
-    <div id="mainMenu" class="screen active">
-        <div class="text-center mb-6">
+    <div id="mainMenu" class="screen">
+        <div class="text-center mb-6">            
             <h1 class="text-6xl font-black tracking-tighter mb-2">أُحـجِـيَّـة</h1>
             <p class="text-indigo-400 font-bold tracking-[0.3em] text-sm uppercase mb-4">Brain Quest</p>
             <p class="text-slate-400 italic text-sm">"وَفِي السَّمَاءِ رِزْقُكُمْ وَمَا تُوعَدُونَ"</p>
@@ -88,33 +294,107 @@
                 </a>
             </div>
             <p class="text-slate-500 text-xs mt-2 text-center">تابعني لمزيد من التحديثات! 🚀</p>
-
+            <div class="production-warning text-center">⚠️ نسخة تجريبية - تحكم كامل بالصوت</div>
             <button onclick="exitGame()" class="text-slate-600 text-xs mt-6 hover:text-red-400 transition text-center font-bold">إغلاق اللعبة</button>
         </div>
     </div>
 
-    <!-- شاشة الإعدادات -->
+    <!-- شاشة الإعدادات - تحكم كامل بالصوت -->
     <div id="settingsScreen" class="screen">
-        <div class="glass p-10 w-80 text-center border border-white/10">
-            <h2 class="text-2xl font-black mb-8 text-indigo-400">الإعدادات</h2>
-            <div class="space-y-6 text-right">
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
-                    <span class="font-bold">🎵 الموسيقى</span>
-                    <input type="checkbox" id="musicToggle" checked onchange="toggleMusic()" class="w-6 h-6 accent-indigo-500">
+        <div class="glass p-8 w-96 text-center border border-white/10">
+            <h2 class="text-3xl font-black mb-8 text-indigo-400 flex items-center justify-center gap-2">
+                <i class="fas fa-sliders-h"></i> التحكم بالصوت
+            </h2>
+            
+            <!-- مستوى الصوت الرئيسي -->
+            <div class="setting-item">
+                <div class="setting-label">
+                    <span class="font-bold flex items-center gap-2">
+                        <i class="fas fa-volume-up text-indigo-400"></i> مستوى الصوت الرئيسي
+                    </span>
+                    <span class="volume-value" id="masterVolumeValue">70%</span>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
-                    <span class="font-bold">🔊 المؤثرات</span>
-                    <input type="checkbox" id="sfxToggle" checked onchange="toggleSFX()" class="w-6 h-6 accent-indigo-500">
+                <input type="range" id="masterVolume" class="volume-slider" min="0" max="100" value="70" oninput="updateMasterVolume(this.value)">
+                <p class="text-xs text-slate-500 mt-2">التحكم في كل الأصوات مرة واحدة</p>
+            </div>
+            
+            <!-- الموسيقى الخلفية -->
+            <div class="setting-item">
+                <div class="setting-label">
+                    <span class="font-bold flex items-center gap-2">
+                        <i class="fas fa-music text-green-400"></i> الموسيقى الخلفية
+                    </span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="musicToggle" checked onchange="toggleMusic()">
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
-                    <span class="font-bold">تغيير الثيم</span>
-                    <select id="themeSelect" onchange="changeTheme()" class="bg-slate-800 text-sm rounded-lg p-1 outline-none">
-                        <option value="default">الليل الغامق</option>
-                        <option value="royal">بنفسجي ملكي</option>
-                    </select>
+                <div class="flex items-center gap-3 mt-2">
+                    <i class="fas fa-volume-down text-slate-500 text-sm"></i>
+                    <input type="range" id="musicVolume" class="volume-slider flex-1" min="0" max="100" value="30" oninput="updateMusicVolume(this.value)">
+                    <i class="fas fa-volume-up text-green-400 text-sm"></i>
                 </div>
             </div>
-            <button onclick="showScreen('mainMenu')" class="btn-main w-full p-4 rounded-2xl mt-10">حـفـظ</button>
+            
+            <!-- المؤثرات الصوتية -->
+            <div class="setting-item">
+                <div class="setting-label">
+                    <span class="font-bold flex items-center gap-2">
+                        <i class="fas fa-gamepad text-yellow-400"></i> المؤثرات الصوتية
+                    </span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="sfxToggle" checked onchange="toggleSFX()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="flex items-center gap-3 mt-2">
+                    <i class="fas fa-volume-down text-slate-500 text-sm"></i>
+                    <input type="range" id="sfxVolume" class="volume-slider flex-1" min="0" max="100" value="50" oninput="updateSFXVolume(this.value)">
+                    <i class="fas fa-volume-up text-yellow-400 text-sm"></i>
+                </div>
+            </div>
+            
+            <!-- الأصوات المرعبة/المضحكة -->
+            <div class="setting-item">
+                <div class="setting-label">
+                    <span class="font-bold flex items-center gap-2">
+                        <i class="fas fa-face-grin-squint-tears text-pink-400"></i> الأصوات المضحكة/المرعبة
+                    </span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="crazySoundsToggle" checked onchange="toggleCrazySounds()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="flex items-center gap-3 mt-2">
+                    <i class="fas fa-volume-down text-slate-500 text-sm"></i>
+                    <input type="range" id="crazyVolume" class="volume-slider flex-1" min="0" max="100" value="60" oninput="updateCrazyVolume(this.value)">
+                    <i class="fas fa-volume-up text-pink-400 text-sm"></i>
+                </div>
+            </div>
+            
+            <!-- الثيم -->
+            <div class="setting-item">
+                <div class="setting-label">
+                    <span class="font-bold flex items-center gap-2">
+                        <i class="fas fa-palette text-purple-400"></i> تغيير الثيم
+                    </span>
+                </div>
+                <select id="themeSelect" onchange="changeTheme()" class="w-full bg-slate-800 text-sm rounded-xl p-3 outline-none border border-white/10">
+                    <option value="default">🌙 الليل الغامق</option>
+                    <option value="royal">👑 بنفسجي ملكي</option>
+                </select>
+            </div>
+            
+            <!-- زر الحفظ -->
+            <button onclick="showScreen('mainMenu')" class="btn-main w-full p-4 rounded-2xl mt-6 text-lg font-bold">
+                <i class="fas fa-check ml-2"></i> حفظ الإعدادات
+            </button>
+            
+            <!-- رسالة توضيحية -->
+            <p class="text-slate-500 text-xs mt-4">
+                <i class="fas fa-info-circle ml-1"></i>
+                الصوت دائمًا شغال - أنت فقط تتحكم في مستواه
+            </p>
         </div>
     </div>
 
@@ -170,7 +450,7 @@
         </div>
     </div>
 
-    <!-- نافذة تأكيد التلميحة (بتظهر الأول) -->
+    <!-- نافذة تأكيد التلميحة -->
     <div id="hintConfirmPopup" class="popup-overlay">
         <div class="popup-box border-yellow-500/50 border-2">
             <div class="text-5xl mb-4">💡</div>
@@ -187,7 +467,7 @@
         </div>
     </div>
 
-    <!-- نافذة عرض التلميحة (بتظهر بعد الخصم) -->
+    <!-- نافذة عرض التلميحة -->
     <div id="hintViewPopup" class="popup-overlay">
         <div class="popup-box border-indigo-500/50 border">
             <h3 class="text-xl font-black mb-4 text-indigo-400">💡 تلميحة المساعدة</h3>
@@ -197,12 +477,166 @@
     </div>
 
     <!-- ملفات الصوت -->
-    <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_584b0e0b2b.mp3?filename=chill-abstract-intro-119277.mp3"></audio>
-    <audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_5e16b5f2c5.mp3?filename=correct-2-46128.mp3"></audio>
-    <audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_a6c7b088c2.mp3?filename=wrong-answer-126515.mp3"></audio>
+    <audio id="scaryFirstSound" preload="auto" loop="false">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+    
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mp3">
+    </audio>
+    
+    <audio id="correctSound" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mp3">
+    </audio>
+    
+    <audio id="wrongSound" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mp3">
+    </audio>
 
     <script>
-        // جميع الأسئلة
+        // متغيرات التحكم في الصوت
+        let audioEnabled = false;
+        let musicEnabled = true;
+        let sfxEnabled = true;
+        let crazySoundsEnabled = true;
+        let firstClickDone = false;
+        
+        // مستويات الصوت
+        let masterVolume = 70;
+        let musicVolume = 30;
+        let sfxVolume = 50;
+        let crazyVolume = 60;
+        
+        // عناصر الصوت
+        const scaryFirstSound = document.getElementById('scaryFirstSound');
+        const bgMusic = document.getElementById('bgMusic');
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+        
+        // تطبيق مستويات الصوت الأولية
+        function applyAllVolumes() {
+            // تحويل النسبة المئوية إلى رقم بين 0 و 1
+            const master = masterVolume / 100;
+            
+            bgMusic.volume = (musicEnabled ? (musicVolume / 100) * master : 0);
+            correctSound.volume = (sfxEnabled ? (sfxVolume / 100) * master : 0);
+            wrongSound.volume = (sfxEnabled ? (sfxVolume / 100) * master : 0);
+            scaryFirstSound.volume = (crazySoundsEnabled ? (crazyVolume / 100) * master : 0);
+            
+            // تحديث العرض
+            document.getElementById('masterVolumeValue').innerText = masterVolume + '%';
+        }
+        
+        // دوال تحديث مستويات الصوت
+        function updateMasterVolume(value) {
+            masterVolume = parseInt(value);
+            applyAllVolumes();
+            localStorage.setItem('masterVolume', masterVolume);
+        }
+        
+        function updateMusicVolume(value) {
+            musicVolume = parseInt(value);
+            applyAllVolumes();
+            localStorage.setItem('musicVolume', musicVolume);
+        }
+        
+        function updateSFXVolume(value) {
+            sfxVolume = parseInt(value);
+            applyAllVolumes();
+            localStorage.setItem('sfxVolume', sfxVolume);
+        }
+        
+        function updateCrazyVolume(value) {
+            crazyVolume = parseInt(value);
+            applyAllVolumes();
+            localStorage.setItem('crazyVolume', crazyVolume);
+        }
+        
+        function toggleMusic() {
+            musicEnabled = document.getElementById('musicToggle').checked;
+            applyAllVolumes();
+            if (musicEnabled && audioEnabled) {
+                bgMusic.play().catch(() => {});
+            } else {
+                bgMusic.pause();
+            }
+            localStorage.setItem('musicEnabled', musicEnabled);
+        }
+        
+        function toggleSFX() {
+            sfxEnabled = document.getElementById('sfxToggle').checked;
+            applyAllVolumes();
+            localStorage.setItem('sfxEnabled', sfxEnabled);
+        }
+        
+        function toggleCrazySounds() {
+            crazySoundsEnabled = document.getElementById('crazySoundsToggle').checked;
+            applyAllVolumes();
+            localStorage.setItem('crazySoundsEnabled', crazySoundsEnabled);
+        }
+        
+        // دالة تشغيل الصوت مع مراعاة الإعدادات
+        function playSound(soundElement, type = 'sfx') {
+            if (!audioEnabled) return;
+            
+            let shouldPlay = false;
+            switch(type) {
+                case 'music':
+                    shouldPlay = musicEnabled;
+                    break;
+                case 'sfx':
+                    shouldPlay = sfxEnabled;
+                    break;
+                case 'crazy':
+                    shouldPlay = crazySoundsEnabled;
+                    break;
+                default:
+                    shouldPlay = true;
+            }
+            
+            if (shouldPlay && soundElement) {
+                soundElement.currentTime = 0;
+                soundElement.play().catch(e => console.log("فشل تشغيل الصوت"));
+            }
+        }
+        
+        // ===== معالجة أول نقرة =====
+        function handleFirstClick() {
+            if (firstClickDone) return;
+            firstClickDone = true;
+            
+            // تطبيق الإعدادات المحفوظة
+            applyAllVolumes();
+            
+            // تشغيل الصوت المرعب إذا كان مفعلًا
+            if (crazySoundsEnabled) {
+                scaryFirstSound.play().then(() => {
+                    console.log("🎃 صوت مرعب تم تشغيله!");
+                }).catch(error => {
+                    console.log("فشل تشغيل الصوت المرعب:", error);
+                });
+            }
+            
+            // إخفاء شاشة البداية
+            document.getElementById('horrorStart').style.display = 'none';
+            
+            // إظهار شاشة القفل
+            document.getElementById('lockScreen').style.display = 'flex';
+            
+            // بعد 3 ثوان، إخفاء القفل وإظهار القائمة الرئيسية
+            setTimeout(() => {
+                document.getElementById('lockScreen').style.display = 'none';
+                document.getElementById('mainMenu').classList.add('active');
+                audioEnabled = true;
+                
+                // تشغيل الموسيقى إذا كانت مفعلة
+                if (musicEnabled) {
+                    bgMusic.play().catch(() => {});
+                }
+            }, 3000);
+        }
+        
+        // باقي دوال اللعبة
         const allLevels = [
             {q: "ما هو الشيء الذي يزداد كلما أخذت منه؟", a: "الحفرة", h: "تجدها في الأرض!"},
             {q: "له عين واحدة ولكنه لا يرى؟", a: "الابرة", h: "تستخدم في الخياطة"},
@@ -231,44 +665,13 @@
             {q: "أنا ملكك لكن الآخرين يستخدمونني أكثر منك؟", a: "اسمي", h: "ينادونك به"}
         ];
 
-        // نظام النقاط
         const POINTS_PER_CORRECT = 20;
         const HINT_COST = 5;
         
         let userProgress = parseInt(localStorage.getItem('brainQuestLvl')) || 1;
         let userPoints = parseInt(localStorage.getItem('brainQuestPoints')) || 0;
-        let hintsUsed = parseInt(localStorage.getItem('brainQuestHintsUsed')) || 0;
         let activeLevel = 1;
-        
-        // إعدادات الصوت
-        let audioEnabled = false;
-        let sfxEnabled = true;
-        const bgMusic = document.getElementById('bgMusic');
-        const correctSound = document.getElementById('correctSound');
-        const wrongSound = document.getElementById('wrongSound');
-        
-        bgMusic.volume = 0.2;
-        correctSound.volume = 0.4;
-        wrongSound.volume = 0.4;
 
-        // تفعيل الصوت عند أول تفاعل
-        function enableAudio() {
-            if (!audioEnabled) {
-                bgMusic.play().then(() => {
-                    audioEnabled = true;
-                    if (!document.getElementById('musicToggle').checked) {
-                        bgMusic.pause();
-                    }
-                }).catch(() => {});
-            }
-        }
-
-        document.addEventListener('click', function enableOnClick() {
-            enableAudio();
-            document.removeEventListener('click', enableOnClick);
-        }, { once: true });
-
-        // عرض الشاشات
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -277,28 +680,20 @@
                 document.getElementById('currentPoints').innerText = userPoints;
             }
             if(id === 'winScreen') {
-                const totalPoints = userPoints;
-                document.getElementById('finalPoints').innerText = totalPoints;
+                document.getElementById('finalPoints').innerText = userPoints;
             }
         }
 
-        // بداية لعبة جديدة
         function startNewGame() {
             userProgress = 1;
             userPoints = 0;
-            hintsUsed = 0;
             localStorage.setItem('brainQuestLvl', userProgress);
             localStorage.setItem('brainQuestPoints', userPoints);
-            localStorage.setItem('brainQuestHintsUsed', hintsUsed);
             showScreen('mapScreen');
         }
 
-        // إعادة تعيين اللعبة
-        function resetGame() {
-            startNewGame();
-        }
+        function resetGame() { startNewGame(); }
 
-        // رسم الخريطة
         function renderMap() {
             const grid = document.getElementById('mapGrid');
             grid.innerHTML = '';
@@ -313,7 +708,6 @@
             }
         }
 
-        // بدء مستوى
         function startLevel(lvlId) {
             activeLevel = lvlId;
             document.getElementById('levelTitle').innerText = `LEVEL ${lvlId < 10 ? '0'+lvlId : lvlId}`;
@@ -323,15 +717,12 @@
             showScreen('gameScreen');
         }
 
-        // التحقق من الإجابة
         function checkAnswer() {
             const val = document.getElementById('answerInput').value.trim().toLowerCase().replace(/\s+/g, '');
             const correctAnswer = allLevels[activeLevel-1].a.replace(/\s+/g, '');
 
             if (val === correctAnswer) {
-                if (sfxEnabled && audioEnabled) {
-                    correctSound.play().catch(() => {});
-                }
+                playSound(correctSound, 'sfx');
                 
                 if (activeLevel === userProgress) {
                     userPoints += POINTS_PER_CORRECT;
@@ -350,56 +741,32 @@
                     showScreen('mapScreen');
                 }
             } else {
-                if (sfxEnabled && audioEnabled) {
-                    wrongSound.play().catch(() => {});
-                }
+                playSound(wrongSound, 'sfx');
                 alert("❌ خطأ! ركز وحاول مرة أخرى");
             }
         }
 
-        // فتح نافذة تأكيد التلميحة
         function openHintConfirm() {
-            // التحقق من وجود نقاط كافية أولاً
             if (userPoints < HINT_COST) {
-                alert(`⚠️ نقاطك غير كافية! تحتاج ${HINT_COST} نقاط لفتح التلميحة. أجب على أسئلة أولاً.`);
+                alert(`⚠️ نقاطك غير كافية! تحتاج ${HINT_COST} نقاط`);
                 return;
             }
-            
-            // عرض نافذة التأكيد مع النقاط الحالية
             document.getElementById('confirmPoints').innerText = userPoints;
             document.getElementById('hintConfirmPopup').style.display = 'flex';
         }
 
-        // استخدام التلميحة (خصم النقاط وعرض المحتوى)
         function useHint() {
-            // خصم النقاط
             userPoints -= HINT_COST;
-            hintsUsed++;
             localStorage.setItem('brainQuestPoints', userPoints);
-            localStorage.setItem('brainQuestHintsUsed', hintsUsed);
-            
-            // تحديث عرض النقاط في شاشة اللعبة
             document.getElementById('currentPoints').innerText = userPoints;
-            
-            // إغلاق نافذة التأكيد
             closeHintConfirm();
-            
-            // عرض نافذة التلميحة مع النص
             document.getElementById('hintText').innerText = allLevels[activeLevel-1].h;
             document.getElementById('hintViewPopup').style.display = 'flex';
         }
 
-        // إغلاق نافذة التأكيد
-        function closeHintConfirm() {
-            document.getElementById('hintConfirmPopup').style.display = 'none';
-        }
+        function closeHintConfirm() { document.getElementById('hintConfirmPopup').style.display = 'none'; }
+        function closeHintView() { document.getElementById('hintViewPopup').style.display = 'none'; }
 
-        // إغلاق نافذة عرض التلميحة
-        function closeHintView() {
-            document.getElementById('hintViewPopup').style.display = 'none';
-        }
-
-        // تغيير الثيم
         function changeTheme() {
             const theme = document.getElementById('themeSelect').value;
             const body = document.getElementById('mainBody');
@@ -407,36 +774,49 @@
             localStorage.setItem('gameTheme', theme);
         }
 
-        // تشغيل/إيقاف الموسيقى
-        function toggleMusic() {
-            if (document.getElementById('musicToggle').checked) {
-                if (audioEnabled) bgMusic.play().catch(() => {});
-            } else {
-                bgMusic.pause();
-            }
-        }
-
-        // تشغيل/إيقاف المؤثرات
-        function toggleSFX() {
-            sfxEnabled = document.getElementById('sfxToggle').checked;
-        }
-
-        // الخروج من اللعبة
         function exitGame() {
-            if(confirm("هل أنت متأكد من الخروج؟ راح نشتاق لك ولذكائك! 🥺✨")) {
+            if(confirm("هل أنت متأكد من الخروج؟")) {
                 window.close();
-                setTimeout(() => { window.location.href = "about:blank"; }, 500);
             }
         }
 
+        // تحميل الإعدادات المحفوظة
         window.onload = () => {
+            // تحميل إعدادات الصوت
+            masterVolume = parseInt(localStorage.getItem('masterVolume')) || 70;
+            musicVolume = parseInt(localStorage.getItem('musicVolume')) || 30;
+            sfxVolume = parseInt(localStorage.getItem('sfxVolume')) || 50;
+            crazyVolume = parseInt(localStorage.getItem('crazyVolume')) || 60;
+            
+            musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+            sfxEnabled = localStorage.getItem('sfxEnabled') !== 'false';
+            crazySoundsEnabled = localStorage.getItem('crazySoundsEnabled') !== 'false';
+            
+            // تحديث واجهة الإعدادات
+            document.getElementById('masterVolume').value = masterVolume;
+            document.getElementById('musicVolume').value = musicVolume;
+            document.getElementById('sfxVolume').value = sfxVolume;
+            document.getElementById('crazyVolume').value = crazyVolume;
+            
+            document.getElementById('musicToggle').checked = musicEnabled;
+            document.getElementById('sfxToggle').checked = sfxEnabled;
+            document.getElementById('crazySoundsToggle').checked = crazySoundsEnabled;
+            
+            document.getElementById('masterVolumeValue').innerText = masterVolume + '%';
+            
+            // تحميل الثيم
             const savedTheme = localStorage.getItem('gameTheme');
             if(savedTheme) {
                 document.getElementById('themeSelect').value = savedTheme;
                 changeTheme();
             }
             
-            renderMap();
+            // تحميل الأصوات مسبقاً
+            scaryFirstSound.load();
+            bgMusic.load();
+            
+            // إخفاء القائمة الرئيسية في البداية
+            document.getElementById('mainMenu').classList.remove('active');
         };
     </script>
 </body>
