@@ -1,212 +1,171 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دولة فلسطين | البوابة الرقمية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --gold: #c5a059;
-            --deep-red: #8b0000;
-            --pure-black: #0a0a0a;
-            --text-gray: #d1d1d1;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--pure-black);
-            color: #fff;
-            font-family: 'Noto+Naskh+Arabic', serif;
-            line-height: 1.6;
-        }
-
-        /* واجهة سينمائية بملء الشاشة */
-        .hero-gate {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            background: #000;
-        }
-
-        .hero-video-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.5), var(--pure-black));
-            z-index: 1;
-        }
-
-        /* صورة خلفية مهيبة (القدس) */
-        .hero-img {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0.6;
-            filter: grayscale(30%);
-            transform: scale(1.1);
-            animation: zoomOut 20s linear infinite alternate;
-        }
-
-        @keyframes zoomOut { from { transform: scale(1.1); } to { transform: scale(1); } }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-        }
-
-        .hero-content h1 {
-            font-size: clamp(4rem, 15vw, 8rem);
-            font-weight: 700;
-            letter-spacing: 5px;
-            margin-bottom: 20px;
-            color: #fff;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        /* مشغل راديو أجيال - تصميم كلاسيكي فاخر */
-        .radio-deck {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px 40px;
-            border-radius: 100px;
-            display: flex;
-            align-items: center;
-            gap: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        .radio-info { text-align: right; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 20px; }
-        .radio-info h2 { font-size: 1.1rem; color: var(--gold); margin-bottom: 4px; }
-        .radio-info p { font-size: 0.8rem; color: var(--text-gray); }
-
-        .play-button {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #fff;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.4s;
-        }
-        .play-button:hover { background: var(--gold); transform: scale(1.1); }
-        .play-button svg { width: 25px; fill: #000; }
-
-        /* الأشرطة الصوتية */
-        .sound-wave { display: flex; gap: 3px; height: 30px; align-items: center; }
-        .wave-bar { width: 3px; height: 5px; background: var(--gold); border-radius: 2px; }
-        .playing .wave-bar { animation: wave 1s infinite ease-in-out alternate; }
-        
-        @keyframes wave { 0% { height: 5px; } 100% { height: 30px; } }
-
-        /* قسم الرسالة */
-        .statement {
-            padding: 150px 10%;
-            text-align: center;
-            max-width: 1000px;
-            margin: auto;
-        }
-
-        .statement h2 {
-            font-size: 3rem;
-            color: var(--gold);
-            margin-bottom: 40px;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .statement p {
-            font-size: 1.6rem;
-            color: var(--text-gray);
-            line-height: 2;
-        }
-
-        footer {
-            padding: 50px;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #444;
-            border-top: 1px solid #1a1a1a;
-        }
-
-    </style>
-</head>
-<body>
-
-<div class="hero-gate">
-    <img src="https://images.unsplash.com/photo-1590072223844-30796338e9c4?q=80&w=2070" class="hero-img" alt="القدس الشريف">
-    <div class="hero-video-overlay"></div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>طريق التحرير 🇵🇸</title>
+<style>
+    :root { --green: #009739; --red: #ee2a35; }
+    body { margin: 0; font-family: 'Cairo', sans-serif; background: #050505; color: white; text-align: center; overflow: hidden; touch-action: manipulation; }
     
-    <div class="hero-content">
-        <h1>فلسطين</h1>
-        <p style="font-size: 1.8rem; letter-spacing: 10px; color: var(--gold);">عصية على النسيان</p>
-    </div>
+    #gameArea {
+        position: relative; width: 95%; max-width: 900px; height: 350px;
+        margin: 15px auto; background: #1a1a1a;
+        border: 5px solid var(--green); border-radius: 20px; overflow: hidden;
+        transition: 0.5s; /* لتغيير الخلفية بسلاسة */
+    }
 
-    <div class="radio-deck">
-        <button class="play-button" onclick="togglePlay()" id="masterBtn">
-            <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-        
-        <div class="sound-wave" id="wave">
-            <div class="wave-bar" style="animation-delay: 0.1s"></div>
-            <div class="wave-bar" style="animation-delay: 0.4s"></div>
-            <div class="wave-bar" style="animation-delay: 0.2s"></div>
-            <div class="wave-bar" style="animation-delay: 0.5s"></div>
-        </div>
+    /* خلفية المرحلة الأولى */
+    .lvl1 { background: linear-gradient(to bottom, #4facfe, #00f2fe); }
+    /* خلفية المرحلة الثانية (أصعب) */
+    .lvl2 { background: linear-gradient(to bottom, #2c3e50, #000000) !important; border-color: var(--red) !important; }
 
-        <div class="radio-info">
-            <h2>راديو أجيال</h2>
-            <p>صوت فلسطين المباشر</p>
-        </div>
-    </div>
+    .stats { font-size: 22px; font-weight: bold; margin: 10px; color: gold; }
+    canvas { display: block; width: 100%; height: 100%; }
+    
+    .btn { padding: 12px 30px; font-size: 18px; border: none; border-radius: 10px; cursor: pointer; margin: 5px; font-weight: bold; }
+    .btn-play { background: var(--red); color: white; }
+</style>
+</head>
+<body class="lvl1">
+
+<div class="stats">✌️ المسافة: <span id="score">0</span> / 100 م | المرحلة: <span id="lvlName">البداية</span></div>
+
+<div id="gameArea" class="lvl1">
+    <canvas id="game"></canvas>
 </div>
 
-<section class="statement">
-    <h2>أرض الكنعانيين</h2>
-    <p>
-        ليست مجرد جغرافيا على الخارطة، بل هي التاريخ الذي يبدأ من هنا.. 
-        حيث الزيتون الذي لا يموت، والقدس التي تبقى البوصلة واليقين. 
-        بوابة السماء، وأرض الرسالات، وشعبٌ يكتبُ كل يومٍ فصلاً جديداً في كتاب الكرامة الإنسانية.
-    </p>
-</section>
-
-<audio id="ajyalStream">
-    <source src="https://stream.radiojar.com/8s5u5tpdtwzuv" type="audio/mpeg">
-</audio>
-
-<footer>
-    تم إعداد هذه المنصة برؤية فنية لتعكس هيبة الوطن &copy; 2026
-</footer>
+<div class="controls">
+    <button class="btn btn-play" onclick="restart()">إعادة من الصفر 🔄</button>
+    <button class="btn" style="background:#333;color:white" onclick="check4K()">جودة 4K 🖥️</button>
+</div>
 
 <script>
-    const audio = document.getElementById('ajyalStream');
-    const wave = document.getElementById('wave');
-    const playIcon = document.getElementById('playIcon');
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    function togglePlay() {
-        if (audio.paused) {
-            audio.play();
-            wave.classList.add('playing');
-            playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // أيقونة الإيقاف
+function playTone(f, d) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.frequency.value = f; g.gain.value = 0.05;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + d);
+}
+
+function setSize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+setSize();
+
+let player = { x: 50, y: 180, w: 60, h: 60, dy: 0, gravity: 0.8, jump: -16 };
+let obstacles = [];
+let score = 0;
+let speed = 6;
+let isDead = false;
+let isPaused = false;
+let frame = 0;
+let level = 1;
+
+function check4K() {
+    alert("⚠️ تنبيه Windows:\nدقة 4K تستهلك RAM و CPU بشكل عالي جداً.\nيجب أن يكون جهازك Robust للتشغيل بدون تعليق.");
+}
+
+function update() {
+    if (isDead || isPaused) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // الجاذبية
+    player.dy += player.gravity;
+    player.y += player.dy;
+    const floor = canvas.height - 80;
+    if (player.y > floor) { player.y = floor; player.dy = 0; }
+
+    // رسم الفدائي
+    ctx.font = "55px serif";
+    ctx.fillText("🥷", player.x, player.y + 45);
+
+    // فحص الوصول لـ 30 متر (رسالة التوقف)
+    if (score === 30 && level === 1) {
+        isPaused = true;
+        if (confirm("أنت الآن قطعت 30 متر بنجاح!\nهل تريد الإكمال في طريق التحرير؟ (المرحلة القادمة أصعب)")) {
+            level = 2;
+            speed = 9; // زيادة السرعة فوراً
+            document.getElementById("gameArea").classList.add("lvl2");
+            document.getElementById("lvlName").innerText = "اقتحام الصعاب";
+            isPaused = false;
+            update(); // إعادة التشغيل
         } else {
-            audio.pause();
-            wave.classList.remove('playing');
-            playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; // أيقونة التشغيل
+            restart();
+        }
+        return;
+    }
+
+    // فحص الوصول لـ 100 متر (النهاية)
+    if (score >= 100) {
+        isDead = true;
+        playTone(800, 0.5);
+        alert("✌️ الله ينصر فلسطين وأهلها 🇵🇸\nاللهم كن عوناً لأهلنا في غزة وانصرهم نصراً عزيزاً.\n\nتم إكمال المهمة بنجاح!");
+        return;
+    }
+
+    // توليد العوائق حسب المرحلة
+    let spawnRate = level === 1 ? 100 : 60; // المرحلة الثانية عوائق أكثر
+    if (frame % spawnRate === 0) {
+        let char = level === 1 ? "🧱" : "🔥"; // تغيير شكل العوائق
+        obstacles.push({ x: canvas.width, y: floor + 10, char: char });
+    }
+
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+        obstacles[i].x -= speed;
+        ctx.font = level === 1 ? "40px serif" : "50px serif";
+        ctx.fillText(obstacles[i].char, obstacles[i].x, obstacles[i].y + 30);
+
+        // تصادم
+        if (Math.abs(player.x - obstacles[i].x) < 40 && player.y > floor - 30) {
+            isDead = true;
+            playTone(150, 0.4);
+            alert("تعثرت في الطريق! حاول مرة أخرى للوصول للهدف ✌️");
+        }
+
+        // نقاط
+        if (obstacles[i].x < -50) {
+            obstacles.splice(i, 1);
+            score++;
+            speed += 0.15; 
+            document.getElementById("score").innerText = score;
+            playTone(700, 0.05);
         }
     }
-</script>
 
+    frame++;
+    requestAnimationFrame(update);
+}
+
+function jump() {
+    const floor = canvas.height - 80;
+    if (player.y >= floor - 5 && !isDead && !isPaused) {
+        player.dy = player.jump;
+        playTone(450, 0.1);
+    }
+}
+
+// التحكم
+window.onkeydown = e => { if(e.code === "Space") jump(); };
+canvas.addEventListener("touchstart", e => { e.preventDefault(); jump(); }, {passive: false});
+window.onmousedown = e => { if(e.target.tagName !== 'BUTTON') jump(); };
+
+function restart() {
+    isDead = false; isPaused = false; score = 0; speed = 6; obstacles = []; level = 1;
+    player.y = 100;
+    document.getElementById("score").innerText = "0";
+    document.getElementById("lvlName").innerText = "البداية";
+    document.getElementById("gameArea").classList.remove("lvl2");
+    update();
+}
+
+// البدء
+update();
+</script>
 </body>
 </html>
