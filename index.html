@@ -2,170 +2,234 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>طريق التحرير 🇵🇸</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لعبة طريق الأذكياء</title>
+
 <style>
-    :root { --green: #009739; --red: #ee2a35; }
-    body { margin: 0; font-family: 'Cairo', sans-serif; background: #050505; color: white; text-align: center; overflow: hidden; touch-action: manipulation; }
-    
-    #gameArea {
-        position: relative; width: 95%; max-width: 900px; height: 350px;
-        margin: 15px auto; background: #1a1a1a;
-        border: 5px solid var(--green); border-radius: 20px; overflow: hidden;
-        transition: 0.5s; /* لتغيير الخلفية بسلاسة */
-    }
+body{
+margin:0;
+background:#111;
+color:white;
+font-family:Cairo,sans-serif;
+text-align:center;
+overflow:hidden;
+}
 
-    /* خلفية المرحلة الأولى */
-    .lvl1 { background: linear-gradient(to bottom, #4facfe, #00f2fe); }
-    /* خلفية المرحلة الثانية (أصعب) */
-    .lvl2 { background: linear-gradient(to bottom, #2c3e50, #000000) !important; border-color: var(--red) !important; }
+h2{color:gold;margin:10px}
 
-    .stats { font-size: 22px; font-weight: bold; margin: 10px; color: gold; }
-    canvas { display: block; width: 100%; height: 100%; }
-    
-    .btn { padding: 12px 30px; font-size: 18px; border: none; border-radius: 10px; cursor: pointer; margin: 5px; font-weight: bold; }
-    .btn-play { background: var(--red); color: white; }
+#gameContainer{
+width:95%;
+max-width:1000px;
+height:60vh;
+max-height:450px;
+margin:auto;
+border-radius:20px;
+border:4px solid #00ff88;
+background:linear-gradient(to top,#1a1a1a,#222);
+position:relative;
+overflow:hidden;
+}
+
+canvas{
+width:100%;
+height:100%;
+display:block;
+}
+
+.stats{
+margin:10px;
+font-size:18px;
+color:#00ffaa;
+}
+
+button{
+padding:8px 20px;
+border:none;
+border-radius:10px;
+background:#ff0040;
+color:white;
+font-size:16px;
+margin:5px;
+cursor:pointer;
+}
 </style>
 </head>
-<body class="lvl1">
+<body>
 
-<div class="stats">✌️ المسافة: <span id="score">0</span> / 100 م | المرحلة: <span id="lvlName">البداية</span></div>
+<h2>🧠 طريق الأذكياء</h2>
 
-<div id="gameArea" class="lvl1">
-    <canvas id="game"></canvas>
+<div class="stats">
+النقاط: <span id="score">0</span> |
+المستوى: <span id="level">1</span>
 </div>
 
-<div class="controls">
-    <button class="btn btn-play" onclick="restart()">إعادة من الصفر 🔄</button>
-    <button class="btn" style="background:#333;color:white" onclick="check4K()">جودة 4K 🖥️</button>
+<div id="gameContainer">
+<canvas id="game"></canvas>
 </div>
+
+<button onclick="restart()">إعادة 🔄</button>
 
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-function playTone(f, d) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.frequency.value = f; g.gain.value = 0.05;
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start(); o.stop(audioCtx.currentTime + d);
+function resize(){
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+}
+window.addEventListener("resize",resize);
+resize();
+
+let groundHeight = 80;
+
+let player = {
+x:80,
+y:0,
+width:40,
+height:40,
+dy:0,
+gravity:0.7,
+jumpPower:-14,
+duck:false
+};
+
+let obstacles=[];
+let score=0;
+let level=1;
+let speed=5;
+let frame=0;
+let gameOver=false;
+
+function resetPlayer(){
+player.y = canvas.height-groundHeight-player.height;
+player.dy=0;
+}
+resetPlayer();
+
+function spawnObstacle(){
+let type = Math.random() > 0.5 ? "ground" : "air";
+let size = 40;
+
+obstacles.push({
+x:canvas.width,
+y:type==="ground" 
+? canvas.height-groundHeight-size
+: canvas.height-groundHeight-size-80,
+width:size,
+height:size,
+type:type
+});
 }
 
-function setSize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
-setSize();
+function update(){
 
-let player = { x: 50, y: 180, w: 60, h: 60, dy: 0, gravity: 0.8, jump: -16 };
-let obstacles = [];
-let score = 0;
-let speed = 6;
-let isDead = false;
-let isPaused = false;
-let frame = 0;
-let level = 1;
+if(gameOver) return;
 
-function check4K() {
-    alert("⚠️ تنبيه Windows:\nدقة 4K تستهلك RAM و CPU بشكل عالي جداً.\nيجب أن يكون جهازك Robust للتشغيل بدون تعليق.");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+// رسم الأرض
+ctx.fillStyle="#333";
+ctx.fillRect(0,canvas.height-groundHeight,canvas.width,groundHeight);
+
+// فيزياء اللاعب
+player.dy += player.gravity;
+player.y += player.dy;
+
+if(player.y > canvas.height-groundHeight-player.height){
+player.y = canvas.height-groundHeight-player.height;
+player.dy=0;
 }
 
-function update() {
-    if (isDead || isPaused) return;
+// رسم اللاعب
+ctx.font="40px serif";
+ctx.fillText("🥷",player.x,player.y+35);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // الجاذبية
-    player.dy += player.gravity;
-    player.y += player.dy;
-    const floor = canvas.height - 80;
-    if (player.y > floor) { player.y = floor; player.dy = 0; }
-
-    // رسم الفدائي
-    ctx.font = "55px serif";
-    ctx.fillText("🥷", player.x, player.y + 45);
-
-    // فحص الوصول لـ 30 متر (رسالة التوقف)
-    if (score === 30 && level === 1) {
-        isPaused = true;
-        if (confirm("أنت الآن قطعت 30 متر بنجاح!\nهل تريد الإكمال في طريق التحرير؟ (المرحلة القادمة أصعب)")) {
-            level = 2;
-            speed = 9; // زيادة السرعة فوراً
-            document.getElementById("gameArea").classList.add("lvl2");
-            document.getElementById("lvlName").innerText = "اقتحام الصعاب";
-            isPaused = false;
-            update(); // إعادة التشغيل
-        } else {
-            restart();
-        }
-        return;
-    }
-
-    // فحص الوصول لـ 100 متر (النهاية)
-    if (score >= 100) {
-        isDead = true;
-        playTone(800, 0.5);
-        alert("✌️ الله ينصر فلسطين وأهلها 🇵🇸\nاللهم كن عوناً لأهلنا في غزة وانصرهم نصراً عزيزاً.\n\nتم إكمال المهمة بنجاح!");
-        return;
-    }
-
-    // توليد العوائق حسب المرحلة
-    let spawnRate = level === 1 ? 100 : 60; // المرحلة الثانية عوائق أكثر
-    if (frame % spawnRate === 0) {
-        let char = level === 1 ? "🧱" : "🔥"; // تغيير شكل العوائق
-        obstacles.push({ x: canvas.width, y: floor + 10, char: char });
-    }
-
-    for (let i = obstacles.length - 1; i >= 0; i--) {
-        obstacles[i].x -= speed;
-        ctx.font = level === 1 ? "40px serif" : "50px serif";
-        ctx.fillText(obstacles[i].char, obstacles[i].x, obstacles[i].y + 30);
-
-        // تصادم
-        if (Math.abs(player.x - obstacles[i].x) < 40 && player.y > floor - 30) {
-            isDead = true;
-            playTone(150, 0.4);
-            alert("تعثرت في الطريق! حاول مرة أخرى للوصول للهدف ✌️");
-        }
-
-        // نقاط
-        if (obstacles[i].x < -50) {
-            obstacles.splice(i, 1);
-            score++;
-            speed += 0.15; 
-            document.getElementById("score").innerText = score;
-            playTone(700, 0.05);
-        }
-    }
-
-    frame++;
-    requestAnimationFrame(update);
+// توليد عوائق
+if(frame % Math.max(80 - level*5,40) === 0){
+spawnObstacle();
 }
 
-function jump() {
-    const floor = canvas.height - 80;
-    if (player.y >= floor - 5 && !isDead && !isPaused) {
-        player.dy = player.jump;
-        playTone(450, 0.1);
-    }
+// حركة عوائق
+for(let i=obstacles.length-1;i>=0;i--){
+let o=obstacles[i];
+o.x -= speed;
+
+ctx.font="35px serif";
+ctx.fillText(o.type==="ground"?"🔥":"🦅",o.x,o.y+30);
+
+// تصادم مضبوط
+if(
+player.x < o.x + o.width &&
+player.x + player.width > o.x &&
+player.y < o.y + o.height &&
+player.y + player.height > o.y
+){
+gameOver=true;
+setTimeout(showResult,200);
 }
 
-// التحكم
-window.onkeydown = e => { if(e.code === "Space") jump(); };
-canvas.addEventListener("touchstart", e => { e.preventDefault(); jump(); }, {passive: false});
-window.onmousedown = e => { if(e.target.tagName !== 'BUTTON') jump(); };
+if(o.x + o.width < 0){
+obstacles.splice(i,1);
+score++;
+speed += 0.1;
 
-function restart() {
-    isDead = false; isPaused = false; score = 0; speed = 6; obstacles = []; level = 1;
-    player.y = 100;
-    document.getElementById("score").innerText = "0";
-    document.getElementById("lvlName").innerText = "البداية";
-    document.getElementById("gameArea").classList.remove("lvl2");
-    update();
+if(score % 15 === 0){
+level++;
+speed += 0.5;
 }
 
-// البدء
+document.getElementById("score").innerText=score;
+document.getElementById("level").innerText=level;
+}
+}
+
+frame++;
+requestAnimationFrame(update);
+}
+
+function jump(){
+if(player.dy===0 && !gameOver){
+player.dy = player.jumpPower;
+}
+}
+
+// تحكم كمبيوتر
+window.addEventListener("keydown",e=>{
+if(e.code==="Space") jump();
+});
+
+// تحكم موبايل
+canvas.addEventListener("touchstart",()=>{
+jump();
+});
+
+function showResult(){
+if(score < 15){
+alert("🤔 تركيز أكثر... اللعبة بدها ذكاء!");
+}
+else if(score < 40){
+alert("🔥 ممتاز... بس لسا قدامك تحدي أكبر!");
+}
+else{
+alert("🧠 إذا مش ذكي... اللعبة مش إلك 😎");
+}
+}
+
+function restart(){
+score=0;
+level=1;
+speed=5;
+frame=0;
+obstacles=[];
+gameOver=false;
+document.getElementById("score").innerText=0;
+document.getElementById("level").innerText=1;
+resetPlayer();
+update();
+}
+
 update();
 </script>
+
 </body>
 </html>
