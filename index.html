@@ -1,235 +1,352 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لعبة طريق الأذكياء</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>رفع وتعديل صور + ساعة عالمية + مساعد Grok</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --text: #1a202c;
+      --card: #ffffff;
+      --primary: #3182ce;
+      --accent: #e53e3e;
+      --grok: #00ff9d;
+    }
+    [data-theme="dark"] {
+      --bg: #1a202c;
+      --text: #e2e8f0;
+      --card: #2d3748;
+      --primary: #63b3ed;
+      --accent: #f56565;
+      --grok: #00ff9d;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+      transition: background 0.4s, color 0.4s;
+    }
+    header { text-align: center; margin: 20px 0 30px; }
+    h1 { font-size: clamp(1.8rem, 6vw, 2.8rem); margin-bottom: 12px; }
+    .theme-toggle {
+      background: var(--card); border: none; font-size: 1.4rem;
+      cursor: pointer; padding: 8px 16px; border-radius: 50px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .section {
+      background: var(--card); border-radius: 16px; padding: 20px;
+      margin: 20px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .upload-area {
+      border: 3px dashed var(--primary); border-radius: 12px;
+      padding: 40px 20px; text-align: center; cursor: pointer;
+    }
+    .upload-area:hover, .upload-area.dragover { background: rgba(49,130,206,0.1); }
+    #preview { max-width: 100%; max-height: 400px; margin: 20px auto; border-radius: 12px; display: block; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0; }
+    button, input[type="range"] {
+      padding: 10px 18px; border: none; border-radius: 8px;
+      background: var(--primary); color: white; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    button:hover { transform: translateY(-2px); background: #2b6cb0; }
+    .filter-btn { background: #4a5568; }
+    .filter-btn.active { background: var(--accent); }
+    .clocks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+    .clock-card {
+      background: linear-gradient(135deg, var(--primary), #4299e1);
+      color: white; padding: 16px; border-radius: 12px; text-align: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+    .city { font-weight: bold; margin-bottom: 6px; font-size: 1.1rem; }
+    .time { font-size: 1.6rem; font-family: monospace; }
+    footer { text-align: center; margin-top: 40px; opacity: 0.7; font-size: 0.9rem; }
 
-<style>
-body{
-margin:0;
-background:#111;
-color:white;
-font-family:Cairo,sans-serif;
-text-align:center;
-overflow:hidden;
-}
+    /* ──────────────── Grok Chat Bubble ──────────────── */
+    #grok-chat {
+      position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+      width: 320px; background: var(--card); border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25); overflow: hidden;
+      display: none; flex-direction: column; transition: all 0.3s;
+    }
+    #grok-chat.open { display: flex; }
+    #grok-header {
+      background: var(--grok); color: #000; padding: 12px 16px;
+      font-weight: bold; display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    #grok-body {
+      flex: 1; padding: 12px; max-height: 320px; overflow-y: auto;
+      background: var(--bg); font-size: 0.95rem; line-height: 1.5;
+    }
+    .msg { margin: 8px 0; padding: 10px 14px; border-radius: 12px; max-width: 85%; }
+    .msg.user { background: var(--primary); color: white; margin-left: auto; }
+    .msg.bot { background: #e2e8f0; color: #000; }
+    [data-theme="dark"] .msg.bot { background: #4a5568; color: white; }
+    #grok-input-area {
+      display: flex; padding: 10px; border-top: 1px solid #ddd;
+      background: var(--card);
+    }
+    #grok-input {
+      flex: 1; padding: 10px 14px; border: 1px solid #ccc; border-radius: 20px;
+      outline: none; font-size: 1rem;
+    }
+    #grok-send { background: var(--grok); color: #000; border: none; border-radius: 50%;
+      width: 40px; height: 40px; margin-right: 8px; cursor: pointer; font-size: 1.3rem; }
+    #grok-toggle {
+      position: fixed; bottom: 20px; right: 20px; z-index: 999;
+      width: 60px; height: 60px; background: var(--grok); color: #000;
+      border: none; border-radius: 50%; font-size: 1.8rem; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0,255,157,0.4); transition: all 0.3s;
+    }
+    #grok-toggle:hover { transform: scale(1.1); }
 
-h2{color:gold;margin:10px}
-
-#gameContainer{
-width:95%;
-max-width:1000px;
-height:60vh;
-max-height:450px;
-margin:auto;
-border-radius:20px;
-border:4px solid #00ff88;
-background:linear-gradient(to top,#1a1a1a,#222);
-position:relative;
-overflow:hidden;
-}
-
-canvas{
-width:100%;
-height:100%;
-display:block;
-}
-
-.stats{
-margin:10px;
-font-size:18px;
-color:#00ffaa;
-}
-
-button{
-padding:8px 20px;
-border:none;
-border-radius:10px;
-background:#ff0040;
-color:white;
-font-size:16px;
-margin:5px;
-cursor:pointer;
-}
-</style>
+    @media (max-width: 500px) {
+      #grok-chat { width: 90%; right: 5%; bottom: 80px; }
+      .controls { flex-direction: column; }
+      button, input[type="range"] { width: 100%; }
+    }
+  </style>
 </head>
 <body>
 
-<h2>🧠 طريق الأذكياء</h2>
+  <header>
+    <h1>رفع صور + تعديل + ساعة عالمية</h1>
+    <button class="theme-toggle" onclick="toggleTheme()">☀️ / 🌙</button>
+  </header>
 
-<div class="stats">
-النقاط: <span id="score">0</span> |
-المستوى: <span id="level">1</span>
-</div>
+  <!-- باقي الأقسام السابقة (رفع الصور + الساعة) -->
+  <div class="section">
+    <h2 style="text-align:center; margin-bottom:16px;">رفع وتعديل الصورة</h2>
+    <div class="upload-area" id="dropArea">
+      اضغط هنا أو اسحب صورة من الجوال<br>(أو اضغط لاختيار)
+      <input type="file" id="fileInput" accept="image/*" hidden>
+    </div>
+    <img id="preview" src="" alt="">
+    
+    <div class="controls" id="controls" style="display:none;">
+      <button onclick="resetImage()">إعادة تعيين</button>
+      <button onclick="rotateImage()">دوران ↻</button>
+      <button class="filter-btn" data-filter="grayscale(1)" onclick="applyFilter(this)">رمادي</button>
+      <button class="filter-btn" data-filter="sepia(0.8)" onclick="applyFilter(this)">سيبيا</button>
+      <button class="filter-btn" data-filter="invert(1)" onclick="applyFilter(this)">عكس</button>
+      <button class="filter-btn" data-filter="blur(3px)" onclick="applyFilter(this)">ضبابي</button>
+      <button class="filter-btn" data-filter="none" onclick="applyFilter(this)">عادي</button>
+      
+      <label>السطوع: <input type="range" id="brightness" min="0" max="200" value="100" oninput="updateFilters()"></label>
+      <label>التباين: <input type="range" id="contrast" min="0" max="200" value="100" oninput="updateFilters()"></label>
+    </div>
+  </div>
 
-<div id="gameContainer">
-<canvas id="game"></canvas>
-</div>
+  <div class="section">
+    <h2 style="text-align:center; margin-bottom:16px;">ساعة عالمية حية</h2>
+    <div class="clocks-grid" id="clocks"></div>
+  </div>
 
-<button onclick="restart()">إعادة 🔄</button>
+  <footer>
+    صمم للجوال أولاً • يعمل بدون إنترنت بعد التحميل الأول (ما عدا المساعد) • 2026
+  </footer>
 
-<script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+  <!-- ──────────────── Grok مساعد ──────────────── -->
+  <button id="grok-toggle">🗨️</button>
 
-function resize(){
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
-}
-window.addEventListener("resize",resize);
-resize();
+  <div id="grok-chat">
+    <div id="grok-header">
+      <span>مساعد Grok</span>
+      <button onclick="closeChat()" style="background:none;border:none;color:#000;font-size:1.4rem;cursor:pointer;">×</button>
+    </div>
+    <div id="grok-body">
+      <div class="msg bot">مرحبا علاء! أنا Grok، كيف أقدر أساعدك اليوم؟ 📸🕒</div>
+    </div>
+    <div id="grok-input-area">
+      <input id="grok-input" type="text" placeholder="اكتب سؤالك هنا..." />
+      <button id="grok-send">➤</button>
+    </div>
+  </div>
 
-let groundHeight = 80;
+  <script>
+    // ─── Theme ───
+    function toggleTheme() {
+      document.body.dataset.theme = document.body.dataset.theme === 'dark' ? '' : 'dark';
+    }
 
-let player = {
-x:80,
-y:0,
-width:40,
-height:40,
-dy:0,
-gravity:0.7,
-jumpPower:-14,
-duck:false
-};
+    // ─── Photo Edit (نفس الكود السابق) ───
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const controls = document.getElementById('controls');
+    let currentFilter = 'none';
+    let rotation = 0;
 
-let obstacles=[];
-let score=0;
-let level=1;
-let speed=5;
-let frame=0;
-let gameOver=false;
+    ['click', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+      dropArea.addEventListener(evt, e => {
+        e.preventDefault();
+        if (evt === 'dragover' || evt === 'drop') dropArea.classList.add('dragover');
+        else dropArea.classList.remove('dragover');
+        if (evt === 'drop') {
+          const file = e.dataTransfer.files[0];
+          if (file && file.type.startsWith('image/')) loadImage(file);
+        }
+      });
+    });
 
-function resetPlayer(){
-player.y = canvas.height-groundHeight-player.height;
-player.dy=0;
-}
-resetPlayer();
+    dropArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', e => {
+      if (e.target.files[0]) loadImage(e.target.files[0]);
+    });
 
-function spawnObstacle(){
-let type = Math.random() > 0.5 ? "ground" : "air";
-let size = 40;
+    function loadImage(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        controls.style.display = 'flex';
+        resetImage();
+      };
+      reader.readAsDataURL(file);
+    }
 
-obstacles.push({
-x:canvas.width,
-y:type==="ground" 
-? canvas.height-groundHeight-size
-: canvas.height-groundHeight-size-80,
-width:size,
-height:size,
-type:type
-});
-}
+    function resetImage() {
+      preview.style.filter = 'none';
+      preview.style.transform = 'rotate(0deg)';
+      document.getElementById('brightness').value = 100;
+      document.getElementById('contrast').value = 100;
+      currentFilter = 'none';
+      rotation = 0;
+      updateFilters();
+    }
 
-function update(){
+    function rotateImage() {
+      rotation = (rotation + 90) % 360;
+      preview.style.transform = `rotate(${rotation}deg)`;
+    }
 
-if(gameOver) return;
+    function applyFilter(btn) {
+      currentFilter = btn.dataset.filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateFilters();
+    }
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
+    function updateFilters() {
+      const bright = document.getElementById('brightness').value;
+      const cont = document.getElementById('contrast').value;
+      preview.style.filter = `${currentFilter} brightness(${bright}%) contrast(${cont}%)`;
+    }
 
-// رسم الأرض
-ctx.fillStyle="#333";
-ctx.fillRect(0,canvas.height-groundHeight,canvas.width,groundHeight);
+    // ─── World Clock (نفس السابق) ───
+    const cities = [
+      { name: "نابلس / فلسطين", tz: "Asia/Hebron" },
+      { name: "القاهرة", tz: "Africa/Cairo" },
+      { name: "الرياض", tz: "Asia/Riyadh" },
+      { name: "دبي", tz: "Asia/Dubai" },
+      { name: "لندن", tz: "Europe/London" },
+      { name: "نيويورك", tz: "America/New_York" }
+    ];
 
-// فيزياء اللاعب
-player.dy += player.gravity;
-player.y += player.dy;
+    const clocksDiv = document.getElementById('clocks');
+    cities.forEach(city => {
+      const card = document.createElement('div');
+      card.className = 'clock-card';
+      card.innerHTML = `<div class="city">${city.name}</div><div class="time" data-tz="${city.tz}"></div>`;
+      clocksDiv.appendChild(card);
+    });
 
-if(player.y > canvas.height-groundHeight-player.height){
-player.y = canvas.height-groundHeight-player.height;
-player.dy=0;
-}
+    function updateClocks() {
+      document.querySelectorAll('.time').forEach(el => {
+        const tz = el.dataset.tz;
+        const now = new Date().toLocaleTimeString('ar-EG', {
+          timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+        });
+        el.textContent = now;
+      });
+    }
+    updateClocks();
+    setInterval(updateClocks, 1000);
 
-// رسم اللاعب
-ctx.font="40px serif";
-ctx.fillText("🥷",player.x,player.y+35);
+    // ─── Grok Chat ───
+    const API_KEY = "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"; // ⚠️ خطر – انقل لـ backend لاحقاً
+    const CHAT_URL = "https://api.x.ai/v1/chat/completions";
+    const MODEL = "grok-4-0709"; // أو grok-4-1-fast-reasoning أو أحدث – تحقق من https://docs.x.ai
 
-// توليد عوائق
-if(frame % Math.max(80 - level*5,40) === 0){
-spawnObstacle();
-}
+    const chatContainer = document.getElementById('grok-chat');
+    const chatBody = document.getElementById('grok-body');
+    const input = document.getElementById('grok-input');
+    const sendBtn = document.getElementById('grok-send');
+    const toggleBtn = document.getElementById('grok-toggle');
 
-// حركة عوائق
-for(let i=obstacles.length-1;i>=0;i--){
-let o=obstacles[i];
-o.x -= speed;
+    function openChat() { chatContainer.classList.add('open'); }
+    function closeChat() { chatContainer.classList.remove('open'); }
 
-ctx.font="35px serif";
-ctx.fillText(o.type==="ground"?"🔥":"🦅",o.x,o.y+30);
+    toggleBtn.onclick = openChat;
 
-// تصادم مضبوط
-if(
-player.x < o.x + o.width &&
-player.x + player.width > o.x &&
-player.y < o.y + o.height &&
-player.y + player.height > o.y
-){
-gameOver=true;
-setTimeout(showResult,200);
-}
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
 
-if(o.x + o.width < 0){
-obstacles.splice(i,1);
-score++;
-speed += 0.1;
+      // رسالة المستخدم
+      addMessage(text, 'user');
+      input.value = '';
 
-if(score % 15 === 0){
-level++;
-speed += 0.5;
-}
+      // مؤشر تحميل
+      const loadingMsg = addMessage("جاري التفكير...", 'bot');
 
-document.getElementById("score").innerText=score;
-document.getElementById("level").innerText=level;
-}
-}
+      try {
+        const res = await fetch(CHAT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [
+              { role: "system", content: "أنت Grok مساعد مفيد وذكي. رد بالعربية الفصحى أو العامية حسب السؤال، وكن ودوداً." },
+              ...getConversationHistory(),
+              { role: "user", content: text }
+            ],
+            temperature: 0.7,
+            max_tokens: 800
+          })
+        });
 
-frame++;
-requestAnimationFrame(update);
-}
+        if (!res.ok) throw new Error(`خطأ ${res.status}`);
 
-function jump(){
-if(player.dy===0 && !gameOver){
-player.dy = player.jumpPower;
-}
-}
+        const data = await res.json();
+        const reply = data.choices?.[0]?.message?.content || "معلش، ما قدرت أرد...";
 
-// تحكم كمبيوتر
-window.addEventListener("keydown",e=>{
-if(e.code==="Space") jump();
-});
+        loadingMsg.remove();
+        addMessage(reply, 'bot');
+      } catch (err) {
+        loadingMsg.remove();
+        addMessage("معلش في مشكلة بالاتصال بالـ API 😕 (" + err.message + ")", 'bot');
+      }
+    }
 
-// تحكم موبايل
-canvas.addEventListener("touchstart",()=>{
-jump();
-});
+    function addMessage(text, type) {
+      const div = document.createElement('div');
+      div.className = `msg ${type}`;
+      div.textContent = text;
+      chatBody.appendChild(div);
+      chatBody.scrollTop = chatBody.scrollHeight;
+      return div;
+    }
 
-function showResult(){
-if(score < 15){
-alert("🤔 تركيز أكثر... اللعبة بدها ذكاء!");
-}
-else if(score < 40){
-alert("🔥 ممتاز... بس لسا قدامك تحدي أكبر!");
-}
-else{
-alert("🧠 إذا مش ذكي... اللعبة مش إلك 😎");
-}
-}
+    function getConversationHistory() {
+      const msgs = [];
+      chatBody.querySelectorAll('.msg').forEach(m => {
+        if (m.classList.contains('user')) msgs.push({ role: "user", content: m.textContent });
+        if (m.classList.contains('bot') && !m.textContent.includes("جاري")) msgs.push({ role: "assistant", content: m.textContent });
+      });
+      return msgs;
+    }
 
-function restart(){
-score=0;
-level=1;
-speed=5;
-frame=0;
-obstacles=[];
-gameOver=false;
-document.getElementById("score").innerText=0;
-document.getElementById("level").innerText=1;
-resetPlayer();
-update();
-}
-
-update();
-</script>
-
+    sendBtn.onclick = sendMessage;
+    input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+  </script>
 </body>
 </html>
