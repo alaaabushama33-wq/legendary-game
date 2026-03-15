@@ -1,185 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL: CLASSIFIED ACCESS</title>
+    <title>مكتشف الفيديوهات العشوائي</title>
     <style>
-        :root {
-            --neon-green: #00ff41;
-            --dark-gray: #050505;
-            --hacker-glow: 0 0 10px rgba(0, 255, 65, 0.4);
-            --crt-flicker: rgba(18, 16, 16, 0.1);
-        }
-
-        body {
-            background-color: var(--dark-gray);
-            color: var(--neon-green);
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            padding: 20px;
-            height: 100vh;
-            overflow: hidden;
-            text-transform: uppercase;
-        }
-
-        /* تأثير الشاشة القديمة CRT */
-        body::after {
-            content: " ";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        #terminal {
-            max-width: 1000px;
-            margin: auto;
-            border: 2px solid var(--neon-green);
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            height: 80vh;
-            overflow-y: auto;
-            box-shadow: var(--hacker-glow);
-            position: relative;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 2px solid var(--neon-green);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .line { margin-bottom: 10px; line-height: 1.4; }
-        
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 1.2em;
-            background: var(--neon-green);
-            animation: blink 0.8s infinite;
-            vertical-align: middle;
-        }
-
-        @keyframes blink { 50% { opacity: 0; } }
-
-        .btn-lang {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: transparent;
-            color: var(--neon-green);
-            border: 1px solid var(--neon-green);
-            padding: 10px 20px;
-            cursor: pointer;
-            z-index: 101;
-            font-family: inherit;
-        }
-
-        .btn-lang:hover { background: var(--neon-green); color: black; }
-
-        .scanline {
-            width: 100%;
-            height: 100px;
-            z-index: 99;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 255, 65, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
-            opacity: 0.1;
-            position: absolute;
-            bottom: 100%;
-            animation: scanline 8s linear infinite;
-        }
-
-        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100px; } }
-
-        [dir="rtl"] { text-align: right; }
+        body { background-color: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .player-wrapper { width: 100%; max-width: 800px; aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        iframe { width: 100%; height: 100%; border: none; }
+        .controls { margin-top: 30px; }
+        button { background: #e50914; color: white; border: none; padding: 15px 40px; font-size: 18px; border-radius: 50px; cursor: pointer; transition: transform 0.2s; }
+        button:hover { transform: scale(1.05); }
+        h1 { margin-bottom: 20px; }
     </style>
 </head>
-<body dir="ltr">
+<body>
 
-<div id="terminal">
-    <div class="scanline"></div>
-    <div class="header">
-        <span id="sys-name">US_CENTCOM_MAIN_FRAME</span>
-        <span id="clearance">LEVEL: TOP_SECRET</span>
-    </div>
+    <h1>استكشف فيديوهات عشوائية</h1>
     
-    <div id="output"></div>
-    <div class="line">
-        <span id="prompt">></span><span id="typing-text"></span><span class="cursor"></span>
+    <div class="player-wrapper">
+        <iframe id="video-frame" src="" allowfullscreen></iframe>
     </div>
-</div>
 
-<button class="btn-toggle btn-lang" onclick="toggleLanguage()">SWITCH LANGUAGE / تبديل اللغة</button>
+    <div class="controls">
+        <button onclick="loadRandomVideo()">الفيديو التالي ⟳</button>
+    </div>
 
-<script>
-    const logs = {
-        en: [
-            "INITIALIZING SECURE PROTOCOL...",
-            "CONNECTING TO SATELLITE NODE 41.2...",
-            "ENCRYPTING RSA 4096 BIT KEY...",
-            "BYPASSING LOCAL FIREWALLS...",
-            "ACCESS GRANTED TO INTELLIGENCE DATABASE.",
-            "STATUS: MONITORING GLOBAL TRAFFIC..."
-        ],
-        ar: [
-            "جاري تهيئة البروتوكول الآمن...",
-            "الاتصال بعقدة القمر الصناعي 41.2...",
-            "تشفير مفتاح RSA 4096 بت...",
-            "تجاوز جدران الحماية المحلية...",
-            "تم منح حق الوصول إلى قاعدة البيانات الاستخباراتية.",
-            "الحالة: مراقبة حركة البيانات العالمية..."
-        ]
-    };
+    <script>
+        // ضع هنا روابط الـ Embed الخاصة بالفيديوهات
+        const videos = [
+            'https://www.pornhub.com/embed/6750c6bdb71f3',
+            'https://www.pornhub.com/embed/69859bc8700f0',
+            'https://www.pornhub.com/embed/6999db80f29c4',
+            'https://www.pornhub.com/embed/670cbc6ba9eeb',
+        ];
 
-    let currentLang = 'en';
-    let logIndex = 0;
-    const output = document.getElementById('output');
-    const typingSpan = document.getElementById('typing-text');
-
-    function typeLine(text, index = 0) {
-        if (index < text.length) {
-            typingSpan.innerText += text.charAt(index);
-            setTimeout(() => typeLine(text, index + 1), 50);
-        } else {
-            setTimeout(processNextLog, 1000);
+        function loadRandomVideo() {
+            const randomIndex = Math.floor(Math.random() * videos.length);
+            document.getElementById('video-frame').src = videos[randomIndex];
         }
-    }
 
-    function processNextLog() {
-        if (logIndex < logs[currentLang].length) {
-            const newLine = document.createElement('div');
-            newLine.className = 'line';
-            newLine.innerText = "> " + logs[currentLang][logIndex];
-            output.appendChild(newLine);
-            output.scrollTop = output.scrollHeight;
-            logIndex++;
-            typingSpan.innerText = "";
-            
-            if (logIndex < logs[currentLang].length) {
-                typeLine("RUNNING_SYSTEM_CHECK...");
-            }
-        }
-    }
-
-    function toggleLanguage() {
-        currentLang = currentLang === 'en' ? 'ar' : 'en';
-        document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-        document.getElementById('sys-name').innerText = currentLang === 'en' ? 'US_CENTCOM_MAIN_FRAME' : 'وحدة القيادة المركزية الأمريكية';
-        output.innerHTML = "";
-        logIndex = 0;
-        typingSpan.innerText = "";
-        processNextLog();
-    }
-
-    // Start initial sequence
-    processNextLog();
-</script>
-
+        // تحميل فيديو عند فتح الموقع
+        loadRandomVideo();
+    </script>
 </body>
 </html>
